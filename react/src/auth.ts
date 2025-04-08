@@ -6,8 +6,7 @@ import {
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 
-const uri = "mongodb://localhost:27017"; // MongoDB URI (adjust as needed)
-const databaseName = "authbase"; // Database name
+const uri = import.meta.env.MONGODB_URI;
 
 // Create MongoClient instance
 const client = new MongoClient(uri, {
