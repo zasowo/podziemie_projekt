@@ -1,0 +1,32 @@
+---
+if (Astro.locals.user?.id) return Astro.redirect('/')
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+  </head>
+  <body>
+    <form id="signin-form">
+      <input type="email" name="email" placeholder="Email" required />
+      <input required type="password" name="password" placeholder="Password" />
+      <button type="submit">Zaloguj się</button>
+    </form>
+    <p>Nie masz konta? <a href="/signup">Zarejestruj się</a>.</p>
+    <script>
+      import { authClient } from '@/auth-client'
+      document.getElementById('signin-form')?.addEventListener('submit', async (event) => {
+        event.preventDefault()
+        const form = event.target as HTMLFormElement
+        const email = (form.elements.namedItem('email') as HTMLInputElement)?.value
+        const password = (form.elements.namedItem('password') as HTMLInputElement)?.value
+        const tmp = await authClient.signIn.email({
+          email,
+          password,
+        })
+        if (Boolean(tmp.error) === false) window.location.href = '/'
+      })
+    </script>
+  </body>
+</html>

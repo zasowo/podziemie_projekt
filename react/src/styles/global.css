@@ -44,8 +44,8 @@ body {
 	line-height: 1.7;
 }
 main {
-	width: 720px;
-	max-width: calc(100% - 2em);
+	/*width: 720px;
+	max-width: calc(100% - 2em);*/
 	margin: auto;
 	padding: 3em 1em;
 }
@@ -143,7 +143,6 @@ hr {
 	position: absolute !important;
 	height: 1px;
 	width: 1px;
-	overflow: hidden;
 	/* IE6, IE7 - a 0 height clip, off to the bottom right of the visible 1px box */
 	clip: rect(1px 1px 1px 1px);
 	/* maybe deprecated but we need to support legacy browsers */
