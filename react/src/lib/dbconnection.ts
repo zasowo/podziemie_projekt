@@ -1,18 +1,17 @@
-import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { MongoClient } from "mongodb";
+import { MongoClient, Db } from "mongodb";
 
 const uri = import.meta.env.MONGODB_URI;
-
-// Create MongoClient instance
-const client = new MongoClient(uri, {
+let cachedClient: MongoClient | null = null;
+let cachedDb: Db | null = null;
+const client = cachedClient ?? new MongoClient(uri, {
     
 });
 
-// Optionally, connect immediately (or handle connections asynchronously elsewhere)
-client.connect().then(() => {
-    console.log("Connected to MongoDB");
-}).catch((error) => {
-    console.error("MongoDB connection error:", error);
-});
-
+if (cachedClient == null){
+    client.connect().then(() => {
+        console.log("Connected to MongoDB");
+    }).catch((error) => {
+        console.error("MongoDB connection error:", error);
+    });
+}
 export {client}
