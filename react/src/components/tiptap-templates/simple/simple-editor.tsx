@@ -73,6 +73,15 @@ import "@/components/tiptap-templates/simple/simple-editor.scss"
 
 import content from "@/components/tiptap-templates/simple/data/content.json"
 
+// Define the interface for the post content data
+interface PostData {
+  content: object; // The Tiptap content is a JSON object
+}
+
+interface TiptapEditorProps {
+  onSubmit: (data: PostData) => void; // Handle submit passed from parent
+}
+
 const MainToolbarContent = ({
   onHighlighterClick,
   onLinkClick,
@@ -175,7 +184,8 @@ const MobileToolbarContent = ({
   </>
 )
 
-export function SimpleEditor() {
+export function SimpleEditor({ onSubmit }: TiptapEditorProps) {
+  const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const isMobile = useMobile()
   const windowSize = useWindowSize()
   const [mobileView, setMobileView] = React.useState<
@@ -244,6 +254,26 @@ export function SimpleEditor() {
     ],
     content: content,
   })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    // Get content as JSON from Tiptap editor
+    const content = editor?.getJSON();
+
+    if (!content) {
+      alert('No content to submit');
+      setIsSubmitting(false);
+      return;
+    }
+
+    const postData: PostData = { content };
+
+    onSubmit(postData); // Call the onSubmit function passed from parent
+    setIsSubmitting(false);
+  };
+  
 
   React.useEffect(() => {
     const checkCursorVisibility = () => {
@@ -317,6 +347,9 @@ export function SimpleEditor() {
           className="simple-editor-content"
         />
       </div>
+      <button onClick={handleSubmit} disabled={isSubmitting}>
+        {isSubmitting ? 'Zapisywanie...' : 'Utwórz stronę'}
+      </button>
     </EditorContext.Provider>
   )
 }

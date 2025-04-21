@@ -13,7 +13,7 @@ if (Astro.locals.user?.id) return Astro.redirect('/')
       <input required type="password" name="password" placeholder="Password" />
       <button type="submit">Zaloguj się</button>
     </form>
-    <p>JNie masz konta? <a href="/signup">Zarejestruj się</a>.</p>
+    <p>Nie masz konta? <a href="/signup">Zarejestruj się</a>.</p>
     <script>
       import { authClient } from '@/auth-client'
       document.getElementById('signin-form')?.addEventListener('submit', async (event) => {

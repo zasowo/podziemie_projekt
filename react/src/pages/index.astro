@@ -23,7 +23,6 @@ const userId = Astro.locals.user?.id ?? null;
           window.location.href = '/signin'
         })
       } else {
-
         document.getElementById('loginButton')?.removeAttribute('disabled');
         document.getElementById('loginButton')?.addEventListener('click', async () => {
           window.location.href = '/signin'

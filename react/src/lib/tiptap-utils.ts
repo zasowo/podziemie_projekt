@@ -1,6 +1,6 @@
 import { Editor } from "@tiptap/react"
 
-export const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+export const MAX_FILE_SIZE = 50 * 1024 * 1024 // 5MB
 
 /**
  * Checks if a mark exists in the editor schema
@@ -28,19 +28,8 @@ export const handleImageUpload = async (
   onProgress?: (event: { progress: number }) => void,
   abortSignal?: AbortSignal
 ): Promise<string> => {
-  // Simulate upload progress
-  for (let progress = 0; progress <= 100; progress += 10) {
-    if (abortSignal?.aborted) {
-      throw new Error("Upload cancelled")
-    }
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    onProgress?.({ progress })
-  }
-
-  return "/images/placeholder-image.png"
-
   // Uncomment to use actual file conversion:
-  // return convertFileToBase64(file, abortSignal)
+  return convertFileToBase64(_file, abortSignal)
 }
 
 /**

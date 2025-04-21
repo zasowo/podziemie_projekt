@@ -1,4 +1,4 @@
-import {client} from "./dbconnection"
+import { client } from "./dbconnection"
 import { Db } from "mongodb";
 
 let cachedDb: Db | null = null;
@@ -13,12 +13,13 @@ export async function connectToDatabase() {
 
 export async function getPageBySlug(slug: string) {
     const db = await connectToDatabase();
+    console.log(slug)
     return db.collection<Page>('pages').findOne({ slug });
   }
   
   export interface Page {
     title: string;
     slug: string;
-    content: string;
+    content: object;
     createdAt: Date;
   }
