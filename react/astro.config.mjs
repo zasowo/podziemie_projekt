@@ -2,13 +2,17 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-
-import vercel from '@astrojs/vercel';
+import node from '@astrojs/node';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://example.com',
+  site: 'https://podziemie.com.pl',
   integrations: [mdx(), sitemap()],
-  adapter: vercel(),
-  output: "server"
+  output: 'server', // enables server rendering
+  adapter: node({
+    mode: 'standalone',
+  }),
+  experimental: {
+    session: true,
+  },
 });

@@ -1,6 +1,8 @@
 ---
-if (!Astro.locals.user?.id) return Astro.redirect('/signin')
+//if (!Astro.locals.user?.id) return Astro.redirect('/signin')
+const userId = Astro.locals.user?.id ?? null;
 ---
+<div id="user-context" data-user-id={userId}></div>
 
 <html lang="en">
   <head>
@@ -8,14 +10,34 @@ if (!Astro.locals.user?.id) return Astro.redirect('/signin')
     <meta name="viewport" content="width=device-width" />
   </head>
   <body>
-    {JSON.stringify(Astro.locals.user)}
-    <button id="signOutButton">Sign Out</button>
+    Użytkownik: {JSON.stringify(Astro.locals.user)}
+    <button disabled id="signOutButton">Wyloguj się</button>
+    <button disabled id="loginButton">Zaloguj się</button>
+    <button disabled id="registerButton">Utwórz konto</button>
+    <div>Strona główna</div>
     <script>
       import { authClient } from '@/auth-client'
-      document.getElementById('signOutButton')?.addEventListener('click', async () => {
-        await authClient.signOut()
-        window.location.href = '/signin'
-      })
+      const userID = document.getElementById('user-context')?.dataset.userId;
+      console.log(userID)
+      
+      if (userID) {
+        document.getElementById('signOutButton')?.removeAttribute('disabled');
+        document.getElementById('signOutButton')?.addEventListener('click', async () => {
+          await authClient.signOut()
+          window.location.href = '/signin'
+        })
+      } else {
+
+        document.getElementById('loginButton')?.removeAttribute('disabled');
+        document.getElementById('loginButton')?.addEventListener('click', async () => {
+          window.location.href = '/signin'
+        })
+        document.getElementById('registerButton')?.removeAttribute('disabled');
+        document.getElementById('registerButton')?.addEventListener('click', async () => {
+          window.location.href = '/signup'
+        })
+      }
+      
     </script>
   </body>
 </html>
