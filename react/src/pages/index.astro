@@ -1,15 +1,11 @@
 ---
 //if (!Astro.locals.user?.id) return Astro.redirect('/signin')
+import BaseLayout from "@/layouts/BaseLayout.astro";
 const userId = Astro.locals.user?.id ?? null;
 ---
 <div id="user-context" data-user-id={userId}></div>
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-  </head>
-  <body>
+<BaseLayout>
     Użytkownik: {JSON.stringify(Astro.locals.user)}
     <button disabled id="signOutButton">Wyloguj się</button>
     <button disabled id="loginButton">Zaloguj się</button>
@@ -39,5 +35,4 @@ const userId = Astro.locals.user?.id ?? null;
       }
       
     </script>
-  </body>
-</html>
+</BaseLayout>

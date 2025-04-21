@@ -1,29 +1,31 @@
 ---
+import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import '@/styles/_variables.scss'
+import '@/styles/_keyframe-animations.scss'
 ---
 
-<html lang="en">
-  <head>
-    <title>Admin - Add Page</title>
-  </head>
-  <body>
-    <h1>Add a New Page</h1>
-    <form method="POST" action="/api/add-page">
-      <label>
-        Title:
-        <input type="text" name="title" required />
-      </label>
-      <br />
-      <label>
-        Slug:
-        <input type="text" name="slug" required />
-      </label>
-      <br />
-      <label>
-        Content:
-        <textarea name="content" rows="10" cols="40" required></textarea>
-      </label>
-      <br />
-      <button type="submit">Create Page</button>
-    </form>
-  </body>
-</html>
+<BaseLayout title="Dodawanie nowej strony">
+  <h1>Add a New Page</h1>
+  <form method="POST" action="/api/add-page">
+    <label>
+      Tytuł:
+      <input type="text" name="title" required />
+    </label>
+    <br />
+    <label>
+      Adres:
+      <input
+        type="text"
+        name="slug"
+        placeholder="/sciezka/do/strony"
+        required
+      />
+    </label>
+    <br />
+    <label> Treść: </label>
+    <br />
+    <SimpleEditor client:only="react" />
+    <button type="submit">Create Page</button>
+  </form>
+</BaseLayout>
