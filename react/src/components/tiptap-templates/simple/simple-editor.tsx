@@ -176,7 +176,6 @@ const MobileToolbarContent = ({
 )
 
 export function SimpleEditor() {
-  console.log("SimpleEditor rendered");
   const isMobile = useMobile()
   const windowSize = useWindowSize()
   const [mobileView, setMobileView] = React.useState<
@@ -284,7 +283,7 @@ export function SimpleEditor() {
       setMobileView("main")
     }
   }, [isMobile, mobileView])
-  console.log("editor", editor)
+
   return (
     <EditorContext.Provider value={{ editor }}>
       <Toolbar
