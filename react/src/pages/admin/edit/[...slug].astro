@@ -1,0 +1,23 @@
+---
+import { getPageBySlug } from '@/lib/pagedb';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import EdytorStron from '@/components/edytor-stron';
+import '@/styles/_variables.scss'
+import '@/styles/_keyframe-animations.scss'
+
+// Extract slug from the URL
+const { slug } = Astro.params;
+
+// Fetch all pages (or query the specific one)
+if (slug == undefined){
+    throw new Error(`Brak parametru`)
+} 
+const page = await getPageBySlug(slug);
+if (!page) {
+    throw new Error(`Strona "${slug}" nie została znaleziona.`);
+}
+---
+
+<BaseLayout title="Edycja strony">
+    <EdytorStron content={page.content} existingSlug={slug} client:only></EdytorStron>
+</BaseLayout>

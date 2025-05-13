@@ -11,9 +11,13 @@ export async function connectToDatabase() {
   return cachedDb;
 }
 
+export async function getAllPages() {
+  const db = await connectToDatabase();
+  return db.collection<Page>('pages').find().toArray();
+}
+
 export async function getPageBySlug(slug: string) {
     const db = await connectToDatabase();
-    console.log(slug)
     return db.collection<Page>('pages').findOne({ slug });
   }
   

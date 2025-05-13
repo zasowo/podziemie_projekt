@@ -21,12 +21,21 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const db = await connectToDatabase();
-    await db.collection('pages').insertOne({
-      title: data.titleInput,
-      slug: data.slugInput,
-      content: data.content,
-      createdAt: new Date(),
-    });
+
+    await db.collection('pages').updateOne(
+        { slug: data.slugInput },
+        {
+          $set: {
+            title: data.titleInput,
+            content: data.content,
+            updatedAt: new Date(),
+          },
+          $setOnInsert: {
+            createdAt: new Date(),
+          },
+        },
+        { upsert: true }
+      );
 
     return new Response(JSON.stringify({slug:data.slugInput}), {
       status: 201,

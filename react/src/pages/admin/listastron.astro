@@ -1,0 +1,64 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import '@/styles/_variables.scss';
+import '@/styles/_keyframe-animations.scss';
+import { getAllPages } from "@/lib/pagedb";
+
+const pages = await getAllPages();
+---
+
+<BaseLayout title="Dodawanie nowej strony">
+  <h1>Lista stron</h1>
+  <ul>
+    {pages.map(page => (
+        <li>
+          <h2><a href={`/st/${page.slug}`}>{page.title}</a></h2>
+          <a href={`/admin/edit/${page.slug}`}>Edytuj stronę</a>
+          <a href="#" class="delete-link" data-slug={page.slug}>Usuń stronę</a>
+        </li>
+      ))}
+  </ul>
+
+</BaseLayout>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const links = document.querySelectorAll<HTMLAnchorElement>(".delete-link");
+  
+      links.forEach(link => {
+        link.addEventListener("click", async (e: MouseEvent) => {
+          e.preventDefault();
+  
+          const target = e.currentTarget as HTMLAnchorElement;
+          const slug = target.dataset.slug;
+  
+          if (!slug) {
+            console.error("Brak slug w atrybucie data-slug");
+            return;
+          }
+  
+          const confirmed = confirm(`Czy na pewno chcesz usunąć stronę "${slug}"?`);
+          if (!confirmed) return;
+  
+          try {
+            const res = await fetch('/api/delete-page', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ slug })
+            });
+  
+            if (res.ok) {
+              window.location.href = '/admin/listastron'
+            } else {
+              alert("Wystąpił błąd przy usuwaniu strony.");
+            }
+          } catch (error) {
+            console.error(error);
+            alert("Błąd sieci. Nie udało się usunąć strony.");
+          }
+        });
+      });
+    });
+  </script>

@@ -20,16 +20,16 @@ const userId = Astro.locals.user?.id ?? null;
         document.getElementById('signOutButton')?.removeAttribute('disabled');
         document.getElementById('signOutButton')?.addEventListener('click', async () => {
           await authClient.signOut()
-          window.location.href = '/signin'
+          window.location.href = '/user/signin'
         })
       } else {
         document.getElementById('loginButton')?.removeAttribute('disabled');
         document.getElementById('loginButton')?.addEventListener('click', async () => {
-          window.location.href = '/signin'
+          window.location.href = '/user/signin'
         })
         document.getElementById('registerButton')?.removeAttribute('disabled');
         document.getElementById('registerButton')?.addEventListener('click', async () => {
-          window.location.href = '/signup'
+          window.location.href = '/user/signup'
         })
       }
       

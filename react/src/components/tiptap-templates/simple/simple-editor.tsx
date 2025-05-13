@@ -80,6 +80,7 @@ interface PostData {
 
 interface TiptapEditorProps {
   onSubmit: (data: PostData) => void; // Handle submit passed from parent
+  existingContent? : object;
 }
 
 const MainToolbarContent = ({
@@ -184,7 +185,7 @@ const MobileToolbarContent = ({
   </>
 )
 
-export function SimpleEditor({ onSubmit }: TiptapEditorProps) {
+export function SimpleEditor({ onSubmit, existingContent }: TiptapEditorProps) {
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const isMobile = useMobile()
   const windowSize = useWindowSize()
@@ -252,7 +253,7 @@ export function SimpleEditor({ onSubmit }: TiptapEditorProps) {
       TrailingNode,
       Link.configure({ openOnClick: false }),
     ],
-    content: content,
+    content: existingContent || content,
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
