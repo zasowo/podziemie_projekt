@@ -1,36 +1,60 @@
 import React, { useState } from 'react';
 import { SimpleEditor } from '@/components/tiptap-templates/simple/simple-editor';
 
-const EdytorStron = () => {
-  const [titleInput, setTitleInput] = useState<string>('');
-  const [slugInput, setSlugInput] = useState<string>('');
-  //const [additionalInput, setAdditionalInput] = useState<string>('');
+interface EdytorStronProps {
+  content?: object;
+  existingSlug? : string
+}
 
+const EdytorStron = ( {content, existingSlug} : EdytorStronProps) => {
+  const [titleInput, setTitleInput] = useState<string>('');
+  const [slugInput, setSlugInput] = useState<string>(existingSlug ?? '');
+  //const [additionalInput, setAdditionalInput] = useState<string>('');
   const handleSubmit = async (editorData: { content: object }) => {
     const formData = {
       content: editorData.content,
       titleInput,
       slugInput, 
-      // Add other form data here
     };
 
-    try {
-      const response = await fetch('/api/add-page', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+    if (existingSlug == null) {
+      try {
+        const response = await fetch('/api/add-page', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
 
-      const result = await response.json();
-      if (response.ok) {
-        alert('Strona zapisana pod adresem /' + result.slug);
-      } else {
-        alert(`Error: ${result.message}`);
+        const result = await response.json();
+        if (response.ok) {
+          alert('Strona zapisana pod adresem /' + result.slug);
+        } else {
+          alert(`Error: ${result.message}`);
+        }
+      } catch (error) {
+        alert(`Błąd przy zapisie: ${(error as Error).message}`);
       }
-    } catch (error) {
-      alert(`Błąd przy zapisie: ${(error as Error).message}`);
+    } else {
+      try {
+        const response = await fetch('/api/edit-page', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          alert('Strona zapisana pod adresem /' + result.slug);
+        } else {
+          alert(`Error: ${result.message}`);
+        }
+      } catch (error) {
+        alert(`Błąd przy zapisie: ${(error as Error).message}`);
+      }
     }
   };
 
@@ -55,9 +79,10 @@ const EdytorStron = () => {
             value={slugInput}
             onChange={(e) => setSlugInput(e.target.value)}
             placeholder="adres/do/strony"
+            disabled={!!content}
           />
         </div>
-        <SimpleEditor onSubmit={handleSubmit} />
+        <SimpleEditor onSubmit={handleSubmit} existingContent={content} />
       </form>
     </div>
   );
