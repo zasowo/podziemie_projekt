@@ -41,7 +41,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const db = await connectToDatabase();
-    console.log(data.creatorId)
+    //console.log(data.creatorId)
     await db.collection('pages').insertOne({
       title: data.titleInput,
       slug: data.slugInput,

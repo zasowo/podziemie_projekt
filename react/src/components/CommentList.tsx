@@ -8,7 +8,6 @@ interface CommentListProps {
 }
 
 const CommentList: React.FC<CommentListProps> = ({ comments, postId, role }) => {
-    console.log(comments)
   if (!comments || comments.length === 0) {
     return <h3>Komentarze: brak</h3>;
   }

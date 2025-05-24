@@ -6,7 +6,7 @@ import { auth } from '@/auth';
 export const DELETE: APIRoute = async ({ request }) => {
     try {
         const { postId, commentId } = await request.json();
-        console.log(postId);console.log(commentId);
+        //console.log(postId);console.log(commentId);
         if (postId == null || commentId == null || postId == undefined || commentId == undefined) {
             return new Response(
                 JSON.stringify({ message: 'Brakujące informacje' }),
