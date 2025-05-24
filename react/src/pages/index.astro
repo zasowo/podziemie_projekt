@@ -10,11 +10,14 @@ const userId = Astro.locals.user?.id ?? null;
     <button disabled id="signOutButton">Wyloguj się</button>
     <button disabled id="loginButton">Zaloguj się</button>
     <button disabled id="registerButton">Utwórz konto</button>
+    <a href="/dokumenty/OPU.pdf" target="_blank" rel="noopener noreferrer">
+  Download PDF
+</a>
     <div>Strona główna</div>
     <script>
       import { authClient } from '@/auth-client'
       const userID = document.getElementById('user-context')?.dataset.userId;
-      console.log(userID)
+      
       
       if (userID) {
         document.getElementById('signOutButton')?.removeAttribute('disabled');

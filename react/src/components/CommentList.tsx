@@ -2,7 +2,7 @@ import React from 'react';
 import type { Comment } from '@/lib/pagedb';
 
 interface CommentListProps {
-  comments: Comment[];
+  comments: Comment[] | null;
   postId: string;
   role: string | null;
 }
