@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { SimpleEditor } from '@/components/tiptap-templates/simple/simple-editor';
+import { ObjectId } from 'mongodb';
 
 interface EdytorStronProps {
-  autor: string;
   content?: object;
   existingSlug? : string;
+  creatorId : string;
 }
 
-const EdytorStron = ( {content, existingSlug} : EdytorStronProps) => {
+const EdytorStron = ( {content, existingSlug, creatorId} : EdytorStronProps) => {
   const [titleInput, setTitleInput] = useState<string>('');
   const [slugInput, setSlugInput] = useState<string>(existingSlug ?? '');
   //const [additionalInput, setAdditionalInput] = useState<string>('');
@@ -16,6 +17,7 @@ const EdytorStron = ( {content, existingSlug} : EdytorStronProps) => {
       content: editorData.content,
       titleInput,
       slugInput, 
+      creatorId
     };
 
     if (existingSlug == null) {

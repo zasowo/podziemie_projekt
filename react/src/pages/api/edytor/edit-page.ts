@@ -17,7 +17,13 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     if (!data.content || !data.titleInput || !data.slugInput) {
-      return new Response('Brakujące pola formularza', { status: 400 });
+      return new Response(
+        JSON.stringify({ message: 'Brakujące pola formularza' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     const db = await connectToDatabase();

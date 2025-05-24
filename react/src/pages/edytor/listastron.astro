@@ -2,9 +2,15 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import '@/styles/_variables.scss';
 import '@/styles/_keyframe-animations.scss';
-import { getAllPages } from "@/lib/pagedb";
+import { getUserPages, getAllPages } from "@/lib/pagedb";
 
-const pages = await getAllPages();
+let pages;
+
+if (Astro.locals.role === "admin") {
+  pages = await getAllPages();
+} else {
+  pages = await getUserPages(Astro.locals.user!.id);
+}
 ---
 
 <BaseLayout title="Dodawanie nowej strony">
@@ -12,7 +18,7 @@ const pages = await getAllPages();
   <ul>
     {pages.map(page => (
         <li>
-          <h2><a href={`/st/${page.slug}`}>{page.title}</a></h2>
+          <h2><a href={`/${page.slug}`}>{page.title} - /{page.slug}</a></h2>
           <a href={`/admin/edit/${page.slug}`}>Edytuj stronę</a>
           <a href="#" class="delete-link" data-slug={page.slug}>Usuń stronę</a>
         </li>
@@ -41,7 +47,7 @@ const pages = await getAllPages();
           if (!confirmed) return;
   
           try {
-            const res = await fetch('/api/delete-page', {
+            const res = await fetch('/api/edytor/delete-page', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -50,7 +56,7 @@ const pages = await getAllPages();
             });
   
             if (res.ok) {
-              window.location.href = '/admin/listastron'
+              window.location.href = '/edytor/listastron'
             } else {
               alert("Wystąpił błąd przy usuwaniu strony.");
             }

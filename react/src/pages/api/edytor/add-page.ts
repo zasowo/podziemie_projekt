@@ -1,10 +1,12 @@
 import type { APIRoute } from 'astro';
 import { connectToDatabase } from '@/lib/pagedb';
+import { ObjectId } from 'mongodb';
 
 interface PostData {
   content: object;
   titleInput: string;
   slugInput: string;
+  creatorId: string;
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -14,17 +16,37 @@ export const POST: APIRoute = async ({ request }) => {
       content: body.content,
       titleInput: body.titleInput,
       slugInput: body.slugInput,
+      creatorId: body.creatorId
     }
 
     if (!data.content || !data.titleInput || !data.slugInput) {
-      return new Response('Brakujące pola formularza', { status: 400 });
+      return new Response(
+        JSON.stringify({ message: 'Brakujące pola formularza' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+    data.slugInput = data.slugInput.replace(/^\/+|\/+$/g, '');
+    const protectedSlugs = ['404', 'admin', 'edytor', 'api', 'auth', 'lib', 'pages', 'styles', 'types', 'layouts', 'hooks', 'components', 'user', 'unauthorized'];
+    if(protectedSlugs.some(protectedSlug => data.slugInput.startsWith(protectedSlug + '/') || data.slugInput === protectedSlug)) {
+      return new Response(
+        JSON.stringify({ message: 'Nie można ustawić tego adresu do strony' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     const db = await connectToDatabase();
+    console.log(data.creatorId)
     await db.collection('pages').insertOne({
       title: data.titleInput,
       slug: data.slugInput,
       content: data.content,
+      creatorId: new ObjectId(data.creatorId),
       createdAt: new Date(),
     });
 

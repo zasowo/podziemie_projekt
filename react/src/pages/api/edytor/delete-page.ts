@@ -7,10 +7,15 @@ export const POST: APIRoute = async ({ request }) => {
     const { slug } = await request.json();
 
     if (slug == null) {
-        console.log(slug)
-        return new Response('Brakujące pola formularza', { status: 400 });
+        return new Response(
+        JSON.stringify({ message: 'Brakujące pola formularza' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
-
+    
     const db = await connectToDatabase();
 
     await db.collection('pages').deleteOne(
