@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { SimpleEditor } from '@/components/tiptap-templates/simple/simple-editor';
 
 interface EdytorStronProps {
+  autor: string;
   content?: object;
-  existingSlug? : string
+  existingSlug? : string;
 }
 
 const EdytorStron = ( {content, existingSlug} : EdytorStronProps) => {
@@ -19,7 +20,7 @@ const EdytorStron = ( {content, existingSlug} : EdytorStronProps) => {
 
     if (existingSlug == null) {
       try {
-        const response = await fetch('/api/add-page', {
+        const response = await fetch('/api/edytor/add-page', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -38,7 +39,7 @@ const EdytorStron = ( {content, existingSlug} : EdytorStronProps) => {
       }
     } else {
       try {
-        const response = await fetch('/api/edit-page', {
+        const response = await fetch('/api/edytor/edit-page', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

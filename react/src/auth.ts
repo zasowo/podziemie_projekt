@@ -1,37 +1,46 @@
-import {
+// src/lib/auth.ts
+import { betterAuth } from "better-auth"
+import { mongodbAdapter } from "better-auth/adapters/mongodb"
+import { MongoClient } from "mongodb"
 
-    betterAuth
-
-} from 'better-auth';
-import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { MongoClient } from "mongodb";
-
-const uri = import.meta.env.MONGODB_URI;
-
-// Create MongoClient instance
-const client = new MongoClient(uri, {
-});
-
-// Optionally, connect immediately (or handle connections asynchronously elsewhere)
-client.connect().then(() => {
-    console.log("Connected to MongoDB");
-}).catch((error) => {
-    console.error("MongoDB connection error:", error);
-});
+const client = new MongoClient(process.env.MONGODB_URI!)
+const db = client.db()
 
 export const auth = betterAuth({
-    database: mongodbAdapter(client.db()),
-    baseURL: "https://podziemie.com.pl",
-    emailAndPassword: {
-        enabled: true,
-        minPasswordLength: 8,
-		maxPasswordLength: 128,
+  database: mongodbAdapter(db),
+  emailAndPassword: {
+    enabled: true,
+  },
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24, // 1 day
+  },
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        defaultValue: "user",
+        required: false,
+      },
     },
-    trustedOrigins: ['https://podziemie.com.pl', 'http://localhost:4321']
+  },
+  callbacks: {
+    async signIn(user: any, request: any) {
+      // Fetch role from database during sign in
+      const userDoc = await db.collection("users").findOne({ 
+        email: user.email 
+      })
+      
+      // Return user with role
+      return {
+        user: {
+          ...user,
+          role: userDoc?.role || "user"
+        }
+      }
+    },
+  },
+  trustedOrigins: ['https://podziemie.com.pl', 'http://localhost:4321']
+})
 
-
-    /** if no database is provided, the user data will be stored in memory.
-
-     * Make sure to provide a database to persist user data **/
-
-});
+export type Session = typeof auth.$Infer.Session
