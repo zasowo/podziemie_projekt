@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { SimpleEditor } from '@/components/tiptap-templates/simple/simple-editor';
+import { ObjectId } from 'mongodb';
 
 interface EdytorStronProps {
   content?: object;
-  existingSlug? : string
+  existingSlug? : string;
+  creatorId : string;
 }
 
-const EdytorStron = ( {content, existingSlug} : EdytorStronProps) => {
+const EdytorStron = ( {content, existingSlug, creatorId} : EdytorStronProps) => {
   const [titleInput, setTitleInput] = useState<string>('');
   const [slugInput, setSlugInput] = useState<string>(existingSlug ?? '');
   //const [additionalInput, setAdditionalInput] = useState<string>('');
@@ -15,11 +17,12 @@ const EdytorStron = ( {content, existingSlug} : EdytorStronProps) => {
       content: editorData.content,
       titleInput,
       slugInput, 
+      creatorId
     };
 
     if (existingSlug == null) {
       try {
-        const response = await fetch('/api/add-page', {
+        const response = await fetch('/api/edytor/add-page', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -38,7 +41,7 @@ const EdytorStron = ( {content, existingSlug} : EdytorStronProps) => {
       }
     } else {
       try {
-        const response = await fetch('/api/edit-page', {
+        const response = await fetch('/api/edytor/edit-page', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

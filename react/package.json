@@ -38,7 +38,8 @@
     "dotenv-cli": "^8.0.0",
     "mongodb": "^6.15.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "tiptap-extension-resize-image": "^1.2.2"
   },
   "devDependencies": {
     "sass": "^1.86.3",

@@ -17,6 +17,7 @@ import { Underline } from "@tiptap/extension-underline"
 import { Link } from "@/components/tiptap-extension/link-extension"
 import { Selection } from "@/components/tiptap-extension/selection-extension"
 import { TrailingNode } from "@/components/tiptap-extension/trailing-node-extension"
+import ImageResize from 'tiptap-extension-resize-image';
 
 // --- UI Primitives ---
 import { Button } from "@/components/tiptap-ui-primitive/button"
@@ -246,12 +247,13 @@ export function SimpleEditor({ onSubmit, existingContent }: TiptapEditorProps) {
       ImageUploadNode.configure({
         accept: "image/*",
         maxSize: MAX_FILE_SIZE,
-        limit: 3,
+        limit: 50,
         upload: handleImageUpload,
         onError: (error) => console.error("Upload failed:", error),
       }),
       TrailingNode,
       Link.configure({ openOnClick: false }),
+      ImageResize
     ],
     content: existingContent || content,
   })
