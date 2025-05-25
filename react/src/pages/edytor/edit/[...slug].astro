@@ -7,6 +7,7 @@ import '@/styles/_keyframe-animations.scss'
 
 // Extract slug from the URL
 const { slug } = Astro.params;
+const autorId = Astro.locals.user?.id;
 
 // Fetch all pages (or query the specific one)
 if (slug == undefined){
@@ -19,5 +20,5 @@ if (!page) {
 ---
 
 <BaseLayout title="Edycja strony">
-    <EdytorStron autor="TODO" content={page.content} existingSlug={slug} client:only></EdytorStron>
+    <EdytorStron content={page.content} existingSlug={slug} client:only></EdytorStron>
 </BaseLayout>

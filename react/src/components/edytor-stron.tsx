@@ -5,10 +5,9 @@ import { ObjectId } from 'mongodb';
 interface EdytorStronProps {
   content?: object;
   existingSlug? : string;
-  creatorId : string;
 }
 
-const EdytorStron = ( {content, existingSlug, creatorId} : EdytorStronProps) => {
+const EdytorStron = ( {content, existingSlug} : EdytorStronProps) => {
   const [titleInput, setTitleInput] = useState<string>('');
   const [slugInput, setSlugInput] = useState<string>(existingSlug ?? '');
   //const [additionalInput, setAdditionalInput] = useState<string>('');
@@ -16,8 +15,7 @@ const EdytorStron = ( {content, existingSlug, creatorId} : EdytorStronProps) => 
     const formData = {
       content: editorData.content,
       titleInput,
-      slugInput, 
-      creatorId
+      slugInput
     };
 
     if (existingSlug == null) {

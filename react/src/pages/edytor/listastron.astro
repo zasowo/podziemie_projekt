@@ -19,7 +19,7 @@ if (Astro.locals.role === "admin") {
     {pages.map(page => (
         <li>
           <h2><a href={`/${page.slug}`}>{page.title} - /{page.slug}</a></h2>
-          <a href={`/admin/edit/${page.slug}`}>Edytuj stronę</a>
+          <a href={`/edytor/edit/${page.slug}`}>Edytuj stronę</a>
           <a href="#" class="delete-link" data-slug={page.slug}>Usuń stronę</a>
         </li>
       ))}

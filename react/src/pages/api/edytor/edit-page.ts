@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { connectToDatabase } from '@/lib/pagedb';
+import { auth } from '@/auth';
 
 interface PostData {
   content: object;
@@ -10,7 +11,7 @@ interface PostData {
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const data : PostData = {
+    const data: PostData = {
       content: body.content,
       titleInput: body.titleInput,
       slugInput: body.slugInput,
@@ -27,23 +28,50 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const db = await connectToDatabase();
+    const doc = await db.collection('pages').findOne({ slug: data.slugInput });
+
+    if (!doc) {
+      return new Response(
+        JSON.stringify({ message: 'Nie znaleziono strony' }),
+        {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    const session = await auth.api.getSession(request);
+
+    if (
+      !session ||
+      (session.user.role !== 'admin' &&
+        !(session.user.role === 'edytor' && doc.creatorId.toString() === session.user.id))
+    ) {
+      return new Response(
+        JSON.stringify({ message: 'Brak uprawnień' }),
+        {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
 
     await db.collection('pages').updateOne(
-        { slug: data.slugInput },
-        {
-          $set: {
-            title: data.titleInput,
-            content: data.content,
-            updatedAt: new Date(),
-          },
-          $setOnInsert: {
-            createdAt: new Date(),
-          },
+      { slug: data.slugInput },
+      {
+        $set: {
+          title: data.titleInput,
+          content: data.content,
+          updatedAt: new Date(),
         },
-        { upsert: true }
-      );
+        $setOnInsert: {
+          createdAt: new Date(),
+        },
+      },
+      { upsert: true }
+    );
 
-    return new Response(JSON.stringify({slug:data.slugInput}), {
+    return new Response(JSON.stringify({ slug: data.slugInput }), {
       status: 201,
     });
   } catch (error) {
