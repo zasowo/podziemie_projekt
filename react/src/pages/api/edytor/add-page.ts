@@ -1,22 +1,32 @@
 import type { APIRoute } from 'astro';
 import { connectToDatabase } from '@/lib/pagedb';
 import { ObjectId } from 'mongodb';
+import { auth } from '@/auth';
 
 interface PostData {
   content: object;
   titleInput: string;
   slugInput: string;
-  creatorId: string;
 }
 
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
+
+    const session = await auth.api.getSession(request)
+    if (session?.user.role != "admin" && session?.user.role != "edytor") {
+      return new Response(
+        JSON.stringify({ message: 'Brak uprawnień' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
     const data : PostData = {
       content: body.content,
       titleInput: body.titleInput,
       slugInput: body.slugInput,
-      creatorId: body.creatorId
     }
 
     if (!data.content || !data.titleInput || !data.slugInput) {
@@ -46,7 +56,7 @@ export const POST: APIRoute = async ({ request }) => {
       title: data.titleInput,
       slug: data.slugInput,
       content: data.content,
-      creatorId: new ObjectId(data.creatorId),
+      creatorId: new ObjectId(session.user.id),
       createdAt: new Date(),
     });
 

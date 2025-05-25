@@ -255,7 +255,7 @@ export function SimpleEditor({ onSubmit, existingContent }: TiptapEditorProps) {
       Link.configure({ openOnClick: false }),
       ImageResize
     ],
-    content: existingContent || content,
+    content: existingContent || content || '<p>Zacznij dodawanie strony</p>',
   })
 
   const handleSubmit = async (e: React.FormEvent) => {

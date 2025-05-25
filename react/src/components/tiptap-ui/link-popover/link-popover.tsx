@@ -34,14 +34,18 @@ export interface LinkHandlerProps {
 export interface LinkMainProps {
   url: string
   setUrl: React.Dispatch<React.SetStateAction<string>>
+  displayText: string
+  setDisplayText: React.Dispatch<React.SetStateAction<string>>
   setLink: () => void
   removeLink: () => void
   isActive: boolean
 }
 
+
 export const useLinkHandler = (props: LinkHandlerProps) => {
   const { editor, onSetLink, onLinkActive } = props
   const [url, setUrl] = React.useState<string>("")
+  const [displayText, setDisplayText] = React.useState<string>("")
 
   React.useEffect(() => {
     if (!editor) return
@@ -73,25 +77,23 @@ export const useLinkHandler = (props: LinkHandlerProps) => {
     }
   }, [editor, onLinkActive, url])
 
-  const setLink = React.useCallback(() => {
-    if (!url || !editor) return
+const setLink = React.useCallback(() => {
+  if (!url || !editor) return
 
-    const { from, to } = editor.state.selection
-    const text = editor.state.doc.textBetween(from, to)
+  const { from, to } = editor.state.selection
+  const selectedText = editor.state.doc.textBetween(from, to, " ")
 
-    editor
-      .chain()
-      .focus()
-      .extendMarkRange("link")
-      .insertContent({
-        type: "text",
-        text: text || url,
-        marks: [{ type: "link", attrs: { href: url } }],
-      })
-      .run()
+  const text = displayText || selectedText || url
 
-    onSetLink?.()
-  }, [editor, onSetLink, url])
+  editor
+    .chain()
+    .focus()
+    .insertContent(`<a href="${url}" target="_blank">${text}</a>`)
+    .run()
+
+  onSetLink?.()
+}, [editor, onSetLink, url, displayText])
+
 
   const removeLink = React.useCallback(() => {
     if (!editor) return
@@ -105,12 +107,15 @@ export const useLinkHandler = (props: LinkHandlerProps) => {
   }, [editor])
 
   return {
-    url,
-    setUrl,
-    setLink,
-    removeLink,
-    isActive: editor?.isActive("link") || false,
-  }
+  url,
+  setUrl,
+  displayText,
+  setDisplayText,
+  setLink,
+  removeLink,
+  isActive: editor?.isActive("link") || false,
+}
+
 }
 
 export const LinkButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -148,6 +153,8 @@ export const LinkContent: React.FC<{
 const LinkMain: React.FC<LinkMainProps> = ({
   url,
   setUrl,
+  displayText,
+  setDisplayText,
   setLink,
   removeLink,
   isActive,
@@ -172,6 +179,13 @@ const LinkMain: React.FC<LinkMainProps> = ({
         autoCapitalize="off"
         className="tiptap-input tiptap-input-clamp"
       />
+<input
+  type="text"
+  placeholder="Link text (optional)"
+  value={displayText}
+  onChange={(e) => setDisplayText(e.target.value)}
+  className="tiptap-input tiptap-input-clamp"
+/>
 
       <div className="tiptap-button-group" data-orientation="horizontal">
         <Button

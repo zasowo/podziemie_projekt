@@ -1,13 +1,13 @@
 import type { APIRoute } from 'astro';
 import { connectToDatabase } from '@/lib/pagedb';
-
+import { auth } from '@/auth';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
     const { slug } = await request.json();
 
     if (slug == null) {
-        return new Response(
+      return new Response(
         JSON.stringify({ message: 'Brakujące pola formularza' }),
         {
           status: 400,
@@ -15,14 +15,40 @@ export const POST: APIRoute = async ({ request }) => {
         }
       );
     }
-    
+
     const db = await connectToDatabase();
 
-    await db.collection('pages').deleteOne(
-        { slug: slug },
-      );
+    const doc = await db.collection('pages').findOne({ slug });
 
-    return new Response(JSON.stringify({slug:slug}), {
+    if (!doc) {
+      return new Response(
+        JSON.stringify({ message: 'Nie znaleziono strony' }),
+        {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    const session = await auth.api.getSession(request);
+
+    if (
+      !session ||
+      (session.user.role !== 'admin' &&
+        !(session.user.role === 'edytor' && doc.creatorId.toString() === session.user.id))
+    ) {
+      return new Response(
+        JSON.stringify({ message: 'Brak uprawnień' }),
+        {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    await db.collection('pages').deleteOne({ slug });
+
+    return new Response(JSON.stringify({ slug: slug }), {
       status: 201,
     });
   } catch (error) {

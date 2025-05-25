@@ -9,5 +9,5 @@ const userId = Astro.locals.user?.id;
 
 <BaseLayout title="Dodawanie nowej strony">
   <h1>Dodaj nową stronę</h1>
-  <EdytorStron creatorId={userId!} client:only/>
+  <EdytorStron client:only/>
 </BaseLayout>
