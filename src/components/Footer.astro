@@ -1,0 +1,61 @@
+---
+import { SITE_TITLE } from '@/consts';
+const currentYear = new Date().getFullYear();
+const socialLinks = [
+  { href: "#", iconClass: "fab fa-twitter", label: "Twitter" },
+  { href: "#", iconClass: "fab fa-facebook", label: "Facebook" },
+  { href: "#", iconClass: "fab fa-instagram", label: "Instagram" },
+];
+
+const legalInfoParaphrased = "Od 2017 r. działacze opozycji antykomunistycznej i osoby represjonowane mogą ubiegać się o świadczenia pieniężne (Dz. U. 2017 poz. 1386).";
+const kombatanciLink = "www.kombatanci.gov.pl";
+const footerTagline = "Nie pozwólmy aby podziemne publikacje solidarnościowe uległy zapomnieniu, wraz z odejściem ludzi, którzy je tworzyli."
+---
+<footer class="bg-gray-800 text-gray-400 py-8">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-6 items-start">
+            <div class="md:col-span-7 text-center md:text-left">
+                <a href="/" class="inline-flex items-center space-x-2.5 justify-center md:justify-start mb-3 group">
+                    <div class="w-9 h-9 bg-red-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-flag text-white text-base"></i> 
+                    </div>
+                    <span 
+                      class="font-bold text-white text-xl group-hover:text-red-400 transition-colors font-serif"
+                    >
+                      {SITE_TITLE}
+                    </span>
+                </a>
+                <blockquote class="mt-2 text-sm italic text-gray-500 border-l-4 border-red-500/70 pl-4 py-1 max-w-md mx-auto md:mx-0">
+                  "{footerTagline}"
+                </blockquote>
+            </div>
+
+            <div class="md:col-span-5 text-center md:text-right">
+                <h5 class="text-md font-semibold text-white mb-3">Śledź Nas / Kontakt</h5>
+                <div class="flex space-x-4 justify-center md:justify-end mb-3">
+                  {socialLinks.map(link => (
+                    <a href={link.href} aria-label={link.label} class="text-gray-400 hover:text-red-500 transition-colors duration-150 text-xl">
+                      <i class={link.iconClass}></i>
+                    </a>
+                  ))}
+                </div>
+                <a href={`mailto:makdar@vp.pl`} class="text-sm text-gray-400 hover:text-red-500 transition-colors">makdar@vp.pl</a>
+            </div>
+        </div>
+        
+        <div class="border-t border-gray-700 pt-4 mt-6 text-center md:text-left">
+            <p class="text-xs text-gray-500 leading-relaxed">
+                {legalInfoParaphrased} Szczegóły: <a href={`https://${kombatanciLink}`} target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-red-500 underline">{kombatanciLink}</a>
+            </p>
+        </div>
+        
+        <div class="border-t border-gray-700 mt-4 pt-4 text-center">
+            <p class="text-xs text-gray-500">
+                &copy; {currentYear} {SITE_TITLE}. Wszelkie prawa zastrzeżone.
+            </p>
+        </div>
+    </div>
+</footer>
+<script>
+  // (Footer script for AboutModal trigger remains the same if you have an "About" button in footer)
+</script>

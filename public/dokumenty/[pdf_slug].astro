@@ -1,0 +1,90 @@
+---
+/*import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import CommentList from '@/components/CommentList.tsx';
+import CommentBox from '@/components/CommentBox.tsx';
+import { getPageBySlug } from '@/lib/pagedb'; // To fetch comments
+import type { Page, Comment } from '@/lib/pagedb';
+
+export interface Props {
+  pdf_slug: string;
+}
+
+const { pdf_slug } = Astro.params; // Get the slug from the URL (e.g., "wniosek")
+const pdfPath = `/dokumenty/${pdf_slug}.pdf`;
+
+// Define titles for PDFs, you might want a more robust way to manage this
+const pdfTitles: Record<string, string> = {
+  "wniosek": "Wniosek o przyznanie świadczenia",
+  "ustawa": "Ustawa o działaczach opozycji",
+  "OPU": "Obywatelski Projekt Ustawy",
+};
+const pageTitle = pdfTitles[pdf_slug] || "Dokument";
+
+let pageData: Page | null = null;
+let comments: Comment[] = [];
+let pageIdForComments: string | null = null;
+
+try {
+  // We use the pdf_slug to find a corresponding "page" entry in the database
+  // This "page" entry would hold the comments for the PDF.
+  // IMPORTANT: For this to work, a page with this slug must exist in your 'pages' MongoDB collection.
+  // You might need to create these entries via your /admin panel or a script.
+  // The `content` field of this page entry can be empty or hold PDF metadata.
+  pageData = await getPageBySlug(pdf_slug); // Assuming getPageBySlug uses the string slug.
+  if (pageData) {
+    comments = pageData.comments || [];
+    pageIdForComments = pageData._id.toString();
+  }
+} catch (e) {
+  console.error("Error fetching page data for PDF comments:", e);
+  // If the page doesn't exist, comments will be empty and CommentBox might not be able to post
+  // until a corresponding 'page' document is created in the DB for this pdf_slug.
+}
+
+const user = Astro.locals.user;
+const userId = user?.id;
+const userRole = Astro.locals.role;
+
+// For CommentBox, it expects a postId that is the MongoDB _id of the item being commented on.
+// If pageData is null, new comments cannot be added with the current API setup
+// unless add-comment.ts is modified to create a page if it doesn't exist by slug.
+---
+<BaseLayout title={pageTitle} description={`View document: ${pageTitle}`}>
+  <Header slot="header" />
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h1 class="text-3xl font-bold text-gray-800 mb-6 pb-4 border-b border-gray-200">{pageTitle}</h1>
+      
+      <div class="mb-8">
+        <iframe src={pdfPath} width="100%" height="700px" class="border border-gray-300 rounded-md" title={pageTitle}>
+          Your browser does not support iframes. You can <a href={pdfPath} download>download the PDF</a> directly.
+        </iframe>
+        <p class="mt-2 text-sm text-gray-500 text-center">
+          Having trouble viewing? <a href={pdfPath} download class="text-red-600 hover:underline">Download PDF</a>
+        </p>
+      </div>
+
+      <div class="mt-12">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Discussion</h2>
+        <div class="mb-8">
+          <CommentList client:load comments={comments} postId={pageIdForComments} role={userRole} />
+        </div>
+        {userId && pageIdForComments ? (
+          <CommentBox client:load postId={pageIdForComments} userId={userId} />
+        ) : (
+          <div class="p-4 border rounded-md shadow-sm bg-gray-50">
+            <p class="text-gray-700">
+              { !userId ? "Please sign in to add a comment." : "Comments can be added once this document is registered in the system." }
+            </p>
+            { !userId && <a href="/user/signin" class="mt-2 inline-block px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">Sign In</a> }
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <Footer slot="footer" />
+</BaseLayout>*/

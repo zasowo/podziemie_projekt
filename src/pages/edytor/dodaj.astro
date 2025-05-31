@@ -1,0 +1,36 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import EdytorStron from "@/components/edytor-stron.tsx";
+import { SITE_TITLE } from '@/consts';
+
+const user = Astro.locals.user;
+if (!user || (user.role !== 'admin' && user.role !== 'edytor')) {
+  return Astro.redirect('/user/signin?error=EditorAccessRequired');
+}
+---
+<BaseLayout title={`Dodaj Nową Stronę - ${SITE_TITLE}`}>
+  <Header slot="header" />
+
+  <div class="container mx-auto px-4 py-8 sm:py-12">
+    <header class="mb-8 text-center sm:text-left">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Dodaj Nową Stronę</h1>
+        <a 
+          href="/edytor/listastron" 
+          class="px-4 py-2 text-xs sm:text-sm font-medium text-sky-700 bg-sky-100 rounded-lg hover:bg-sky-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition whitespace-nowrap"
+        >
+          <i class="fas fa-list-alt mr-2"></i>Wróć do Listy Stron
+        </a>
+      </div>
+      <p class="text-gray-600 mt-1">Wypełnij poniższe pola, aby utworzyć nową publikację.</p>
+    </header>
+
+    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-xl">
+      <EdytorStron client:only="react" /> {/* isEditing prop defaults to false */}
+    </div>
+  </div>
+
+  <Footer slot="footer" />
+</BaseLayout>

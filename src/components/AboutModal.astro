@@ -1,0 +1,128 @@
+---
+// No props needed, content and logic are self-contained
+---
+<div 
+  id="about-modal-overlay"
+  aria-modal="true"
+  role="dialog"
+  aria-labelledby="about-modal-title"
+  class="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"
+>
+  <div 
+    id="about-modal-panel"
+    class="bg-white rounded-lg w-full max-w-xl mx-auto p-6 shadow-xl transform scale-95 transition-transform duration-300 ease-in-out"
+  >
+    <div class="flex justify-between items-center mb-4">
+      <h3 id="about-modal-title" class="text-xl font-bold text-gray-800">O Podziemie</h3>
+      <button 
+        id="about-modal-close-icon"
+        type="button"
+        class="text-gray-700 hover:text-red-600 p-1 -m-1" 
+        aria-label="Zamknij modal"
+      >
+        <i class="fas fa-times text-xl"></i> {/* Font Awesome icon */}
+      </button>
+    </div>
+    {/* Content from your React component */}
+    <div class="text-gray-700 space-y-3 text-sm max-h-[70vh] overflow-y-auto modal-content-scroll pr-2">
+      <p>
+        Podziemie to cyfrowa platforma poświęcona eksploracji, dokumentacji i ochronie historycznych artefaktów, miejsc i wydarzeń z Polski.
+      </p>
+      <p>
+        Naszą misją jest wspieranie dynamicznej społeczności entuzjastów historii, badaczy, edukatorów i konserwatorów. Wierzymy, że dzieląc się wiedzą i opowieściami z przeszłości, możemy budować głębsze zrozumienie i docenienie naszego wspólnego dziedzictwa ludzkości.
+      </p>
+      <p>Dzięki Podziemiu użytkownicy mogą:</p>
+      <ul class="list-disc list-inside ml-4 space-y-1">
+        <li>Odkrywać i poznawać historyczne przedmioty i miejsca.</li>
+        <li>Uczestniczyć w dyskusjach z innymi członkami społeczności.</li>
+        <li>Pomagać w katalogowaniu i zachowywaniu cyfrowych zapisów naszej historii.</li>
+      </ul>
+      <p>
+        Platforma ta powstała z pasji do przeszłości i chęci stworzenia miejsca, gdzie dziedzictwo kulturowe może być łatwo dostępne, badane i chronione przez kolejne pokolenia. Stawiamy na współpracę, otwarty dostęp do wiedzy i wykorzystanie nowoczesnych technologii w służbie historii.
+      </p>
+      <p>
+        Zachęcamy do aktywnego udziału, dzielenia się swoimi odkryciami i współtworzenia tej wyjątkowej przestrzeni. Każdy głos i każdy fragment historii ma znaczenie.
+      </p>
+      <p>
+        Dołącz do nas w naszej podróży, aby chronić i celebrować bogatą tkankę ludzkiej historii dla przyszłych generacji.
+      </p>
+    </div>
+    <div class="mt-6 text-center">
+      <button 
+        id="about-modal-close-button"
+        type="button"
+        class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+      >
+        Zamknij
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modalOverlay = document.getElementById('about-modal-overlay') as HTMLElement;
+  const modalPanel = document.getElementById('about-modal-panel') as HTMLElement;
+  const closeIcon = document.getElementById('about-modal-close-icon');
+  const closeButton = document.getElementById('about-modal-close-button');
+
+  function openModal() {
+    if (modalOverlay && modalPanel) {
+      modalOverlay.classList.remove('opacity-0', 'pointer-events-none');
+      modalOverlay.classList.add('opacity-100');
+      modalPanel.classList.remove('scale-95');
+      modalPanel.classList.add('scale-100');
+      document.body.style.overflow = 'hidden';
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+  }
+
+  function closeModal() {
+    if (modalOverlay && modalPanel) {
+      modalOverlay.classList.add('opacity-0');
+      modalOverlay.classList.remove('opacity-100');
+      modalPanel.classList.add('scale-95');
+      modalPanel.classList.remove('scale-100');
+      setTimeout(() => {
+        modalOverlay.classList.add('pointer-events-none');
+      }, 300); // Match transition duration
+      document.body.style.overflow = 'unset';
+      document.removeEventListener('keydown', handleEscapeKey);
+    }
+  }
+
+  function handleEscapeKey(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      closeModal();
+    }
+  }
+
+  modalOverlay?.addEventListener('click', (event) => {
+    if (event.target === modalOverlay) {
+      closeModal();
+    }
+  });
+
+  closeIcon?.addEventListener('click', closeModal);
+  closeButton?.addEventListener('click', closeModal);
+
+  // Expose openModal function to be callable from other scripts
+  (window as any).openAboutModal = openModal;
+</script>
+
+<style is:global>
+  /* Custom scrollbar for modal content if needed */
+  .modal-content-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .modal-content-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Light grey track */
+    border-radius: 10px;
+  }
+  .modal-content-scroll::-webkit-scrollbar-thumb {
+    background: #c5c5c5; /* Medium grey thumb */
+    border-radius: 10px;
+  }
+  .modal-content-scroll::-webkit-scrollbar-thumb:hover {
+    background: #a0a0a0; /* Darker grey thumb on hover */
+  }
+</style>

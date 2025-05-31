@@ -1,0 +1,91 @@
+/* Existing global.css content (fonts, root variables from your project) */
+@import 'tailwindcss';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+/* src/styles/global.css (or your main CSS entry point) */
+
+
+/* Your other global styles can follow, or be in a separate file. */
+/* For example, the .hero-pattern and other custom classes from your index.html's <style> block */
+.hero-pattern {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZHRoPSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+}
+
+/* Any other custom global styles from index.html can also go here */
+.comment-box {
+  border-left: 3px solid #ef4444; /* Or theme('colors.patrimonium-red.DEFAULT') if using the config above */
+}
+
+#lora-title{
+	font-family: 'Lora', serif;
+	font-weight:bold;
+	font-size:xx-large
+}
+
+:root {
+	--accent: #ef4444; /* Changed to match index.html's red */
+	--accent-dark: #dc2626; /* A darker shade of red */
+	--black: 15, 18, 25;
+	--gray: 96, 115, 159;
+	--gray-light: 229, 233, 240;
+	--gray-dark: 34, 41, 57;
+	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
+	--box-shadow:
+		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
+		0 16px 32px rgba(var(--gray), 33%);
+}
+/* ... other existing styles like @font-face ... */
+body {
+	font-family: 'Atkinson', sans-serif; /* You can change this to 'font-sans' from Tailwind or keep Atkinson */
+	margin: 0;
+	padding: 0;
+	text-align: left;
+	background-color: #f9fafb; /* bg-gray-50 from Tailwind */
+	color: rgb(var(--gray-dark));
+	font-size: 16px; /* Adjusted base font size */
+	line-height: 1.7;
+}
+
+/* Styles from index.html <style> block */
+.hero-pattern {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+}
+
+.nav-link { /* For Astro component, will apply hover directly or via Tailwind classes */
+    position: relative;
+}
+
+.nav-link:hover::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #ef4444; /* red-500 */
+}
+
+.category-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Tailwind's shadow-lg */
+}
+
+.comment-box {
+    border-left: 3px solid #ef4444; /* red-500 */
+}
+
+.content-card {
+    transition: all 0.2s ease;
+}
+
+.content-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Additional global styles if needed */
+main {
+  /* Adjusted to be more generic, specific padding/margins on page level */
+  width: 100%;
+}

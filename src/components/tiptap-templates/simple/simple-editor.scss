@@ -1,0 +1,80 @@
+/* src/components/tiptap-templates/simple/simple-editor.scss */
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+body { // These body rules are for the context where SimpleEditor might be the whole page, less critical when embedded in Astro
+  --tt-toolbar-height: 44px;
+  --tt-theme-text: var(--tt-gray-light-900);
+
+  .dark & {
+    --tt-theme-text: var(--tt-gray-dark-900);
+  }
+}
+
+body { // This body selector might conflict if not careful.
+  font-family: "Inter", sans-serif;
+  color: var(--tt-theme-text);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  padding: 0;
+}
+
+html,
+body,
+#root,
+#app {
+  height: 100%;
+  background-color: var(--tt-bg-color);
+}
+
+.tiptap.ProseMirror { // Global styling for ProseMirror if used outside .simple-editor-content
+  font-family: "DM Sans", sans-serif;
+}
+
+.content-wrapper { // This wraps EditorContent in SimpleEditor.tsx
+  height: calc(100% - var(--tt-toolbar-height)); // More relevant for the editor itself
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: block;
+    width: 0.5rem;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--tt-scrollbar-color);
+    border-radius: 4px;
+  }
+  /* Firefox scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--tt-scrollbar-color) transparent;
+}
+
+.simple-editor-content { // This class is on the EditorContent wrapper in ProsemirrorViewer.tsx
+  // max-width: 1200px; // This will be overridden by the Astro page's max-w-3xl (or similar)
+  width: 100%;
+  margin: 0 auto; // Centering within its parent
+}
+
+.simple-editor-content .tiptap.ProseMirror {
+  // padding: 3rem 3rem; /* REMOVE or significantly reduce this padding */
+  padding: 0; /* Let Astro's prose classes or container padding handle it */
+
+  // Selection styles
+  &::selection {
+    background-color: #ACCEF7; 
+    color: inherit; 
+  }
+  &::-moz-selection { 
+    background-color: #ACCEF7;
+    color: inherit;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .simple-editor-content .tiptap.ProseMirror {
+    // padding: 1rem 1.5rem; /* REMOVE or significantly reduce this padding */
+    padding: 0;
+  }
+}

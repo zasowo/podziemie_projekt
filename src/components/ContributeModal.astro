@@ -1,0 +1,142 @@
+---
+// No props needed, content and logic are self-contained
+const siteOwnerEmail = "makdar@vp.pl";
+const subject = encodeURIComponent("Współpraca z Podziemie");
+const body = encodeURIComponent(
+`Dzień dobry,
+
+Chciałbym/Chciałabym przyczynić się do rozwoju Podziemie.
+
+Opis mojego pomysłu/materiału:
+[Tutaj opisz swój pomysł lub rodzaj materiałów, które chcesz przesłać]
+
+Proszę o informację, jak mogę przesłać ewentualne pliki.
+
+Z poważaniem,
+[Twoje Imię i Nazwisko (opcjonalnie)]`
+);
+const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${siteOwnerEmail}&su=${subject}&body=${body}`;
+---
+<div 
+  id="contribute-modal-overlay"
+  aria-modal="true"
+  role="dialog"
+  aria-labelledby="contribute-modal-title"
+  class="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"
+>
+  <div 
+    id="contribute-modal-panel"
+    class="bg-white rounded-lg w-11/12 sm:w-full sm:max-w-xl mx-auto p-6 shadow-xl transform scale-95 transition-transform duration-300 ease-in-out"
+  >
+    <div class="flex justify-between items-center mb-4">
+      <h3 id="contribute-modal-title" class="text-xl font-bold text-gray-800">Jak Możesz Współtworzyć Podziemie?</h3>
+      <button 
+        id="contribute-modal-close-icon"
+        type="button"
+        class="text-gray-700 hover:text-red-600 p-1 -m-1" 
+        aria-label="Zamknij modal"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+    <div class="text-gray-700 space-y-3 text-sm max-h-[70vh] overflow-y-auto modal-content-scroll pr-2">
+      <p>
+        Podziemie to projekt tworzony z pasją przez społeczność dla społeczności. Każdy wkład, duży czy mały, jest dla nas niezwykle cenny i pomaga w budowaniu bogatszego obrazu naszej wspólnej przeszłości.
+      </p>
+      <h4 class="font-semibold text-gray-800 mt-3">Sposoby współtworzenia:</h4>
+      <ul class="list-disc list-inside ml-4 space-y-1">
+        <li><strong>Dzielenie się wiedzą:</strong> Posiadasz ciekawe informacje, badania lub historie związane z konkretnymi artefaktami, miejscami czy wydarzeniami? Daj nam znać!</li>
+        <li><strong>Materiały wizualne:</strong> Masz historyczne zdjęcia, skany dokumentów, mapy lub rysunki, którymi chciałbyś się podzielić?</li>
+        <li><strong>Korekta i uzupełnianie danych:</strong> Zauważyłeś błąd lub posiadasz dodatkowe informacje do istniejących wpisów? Twoja pomoc w weryfikacji jest nieoceniona.</li>
+        <li><strong>Propozycje nowych obiektów:</strong> Znasz miejsce lub artefakt, który powinien znaleźć się na naszej platformie?</li>
+      </ul>
+      <p class="mt-3">
+        Twoje zaangażowanie pozwala nam chronić i promować dziedzictwo kulturowe dla przyszłych pokoleń.
+      </p>
+      <h4 class="font-semibold text-gray-800 mt-4">Skontaktuj się z nami!</h4>
+      <p>
+        Jeśli chcesz podzielić się swoimi materiałami, pomysłami lub masz jakiekolwiek pytania dotyczące współpracy, skontaktuj się z nami mailowo. W treści wiadomości opisz krótko swój wkład. Jeśli posiadasz pliki (zdjęcia, dokumenty), wspomnij o tym – poinformujemy Cię o najlepszym sposobie ich przesłania.
+      </p>
+      <div class="mt-4 text-center">
+        <a
+          href={gmailLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center px-6 py-2.5 bg-red-600 text-white font-medium text-sm rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition"
+        >
+          <i class="fas fa-paper-plane mr-2"></i>
+          Napisz do nas
+        </a>
+      </div>
+      <p class="text-xs text-gray-500 mt-3 text-center">
+        Pamiętaj, aby nie przesyłać dużych załączników bezpośrednio w pierwszej wiadomości bez wcześniejszego uzgodnienia.
+      </p>
+    </div>
+    <div class="mt-6 text-right">
+      <button 
+        id="contribute-modal-close-button"
+        type="button"
+        class="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium text-sm"
+      >
+        Zamknij
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modalOverlayContribute = document.getElementById('contribute-modal-overlay') as HTMLElement;
+  const modalPanelContribute = document.getElementById('contribute-modal-panel') as HTMLElement;
+  const closeIconContribute = document.getElementById('contribute-modal-close-icon');
+  const closeButtonContribute = document.getElementById('contribute-modal-close-button');
+
+  function openContributeModal() {
+    if (modalOverlayContribute && modalPanelContribute) {
+      modalOverlayContribute.classList.remove('opacity-0', 'pointer-events-none');
+      modalOverlayContribute.classList.add('opacity-100');
+      modalPanelContribute.classList.remove('scale-95');
+      modalPanelContribute.classList.add('scale-100');
+      document.body.style.overflow = 'hidden';
+      document.addEventListener('keydown', handleEscapeKeyContribute);
+    }
+  }
+
+  function closeContributeModal() {
+    if (modalOverlayContribute && modalPanelContribute) {
+      modalOverlayContribute.classList.add('opacity-0');
+      modalOverlayContribute.classList.remove('opacity-100');
+      modalPanelContribute.classList.add('scale-95');
+      modalPanelContribute.classList.remove('scale-100');
+      setTimeout(() => {
+        modalOverlayContribute.classList.add('pointer-events-none');
+      }, 300);
+      document.body.style.overflow = 'unset';
+      document.removeEventListener('keydown', handleEscapeKeyContribute);
+    }
+  }
+
+  function handleEscapeKeyContribute(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      closeContributeModal();
+    }
+  }
+
+  modalOverlayContribute?.addEventListener('click', (event) => {
+    if (event.target === modalOverlayContribute) {
+      closeContributeModal();
+    }
+  });
+
+  closeIconContribute?.addEventListener('click', closeContributeModal);
+  closeButtonContribute?.addEventListener('click', closeContributeModal);
+
+  (window as any).openContributeModal = openContributeModal;
+</script>
+
+{/* Styles for modal scrollbar, same as AboutModal */}
+<style is:global>
+  .modal-content-scroll::-webkit-scrollbar { width: 6px; }
+  .modal-content-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+  .modal-content-scroll::-webkit-scrollbar-thumb { background: #c5c5c5; border-radius: 10px; }
+  .modal-content-scroll::-webkit-scrollbar-thumb:hover { background: #a0a0a0; }
+</style>

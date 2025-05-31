@@ -1,0 +1,63 @@
+---
+// List of contributors
+const contributors = [
+  "Ryszard Baranowski",
+  "Jacek Cierniak",
+  "Adam Czarnota",
+  "Dariusz Gospodarek",
+  "Zuzia Grabowska",
+  "Adam Hohendorff",
+  "Jerzy Jeziorowski",
+  "Jarosław Kapsa",
+  "Krzysztof Kasprzak",
+  "Marek Makuła",
+  "Maria Nowakowska-Majcher",
+  "Jarosław Pęczek",
+  "Klementyna Pęczek",
+  "Krzysztof Piechocki",
+  "Adam Putowsk", 
+  "Krzysztof Raczkowiak",
+  "Wojciech Rotarski",
+  "Zbigniew Wieczorek",
+  "Marian Wojciechowski",
+  "Jerzy Ziora"
+];
+---
+<section 
+  aria-labelledby="acknowledgements-title" 
+  class="hero-pattern bg-gray-800 text-gray-300 rounded-lg shadow-xl py-8 my-12" 
+> {/* Added hero-pattern and bg-gray-800 */}
+  <div class="container mx-auto px-6 text-center">
+    <h2 
+      id="acknowledgements-title" 
+      class="text-xl font-semibold text-white mb-4" 
+    >
+      Podziękowania Specjalne
+    </h2>
+
+    <p class="text-sm text-gray-300 leading-relaxed mb-8 max-w-2xl mx-auto">
+      Wszystkim poniżej wymienionym osobom, które przyczyniły się do 
+      udostępnienia publikacji umieszczonych na tej stronie, pragnę bardzo 
+      podziękować:
+    </p>
+
+    <div class="max-w-3xl mx-auto">
+      <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-x-4 gap-y-2 text-gray-300">
+        {contributors.map(name => (
+          <li class="flex items-center justify-center sm:justify-start py-0.5">
+            <svg 
+              class="w-3.5 h-3.5 mr-1.5 text-red-500 shrink-0" 
+              fill="currentColor" 
+              viewBox="0 0 20 20" 
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="text-xs">{name}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>

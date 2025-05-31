@@ -1,0 +1,68 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro'; // Import Header
+import Footer from '@/components/Footer.astro'; // Import Footer
+import { SITE_TITLE } from '@/consts';
+
+// This page is protected by middleware for 'admin' role
+const user = Astro.locals.user;
+if (!user || user.role !== 'admin') {
+  // Fallback redirect, though middleware should handle this primarily
+  return Astro.redirect('/user/signin?error=AdminAccessRequired');
+}
+
+const adminLinks = [
+  {
+    href: "/edytor/dodaj",
+    title: "Dodaj Nową Stronę",
+    description: "Utwórz i opublikuj nową stronę lub artykuł.",
+    icon: "fas fa-plus-circle" // Font Awesome icon
+  },
+  {
+    href: "/edytor/listastron",
+    title: "Zarządzaj Treściami",
+    description: "Edytuj lub usuń istniejące strony i publikacje.",
+    icon: "fas fa-edit" // Font Awesome icon
+  },
+  // Add more admin links here as needed, e.g., User Management, Site Settings etc.
+  // {
+  //   href: "/admin/users",
+  //   title: "Zarządzaj Użytkownikami",
+  //   description: "Przeglądaj i modyfikuj konta użytkowników.",
+  //   icon: "fas fa-users-cog"
+  // }
+];
+---
+<BaseLayout title={`Panel Administratora - ${SITE_TITLE}`}>
+  <Header slot="header" />
+
+  <div class="container mx-auto px-4 py-8 sm:py-12">
+    <header class="mb-8 text-center sm:text-left">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Panel Administratora</h1>
+      <p class="text-gray-600 mt-1">Witaj, {user.name || user.email}! Zarządzaj zawartością strony.</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {adminLinks.map(link => (
+        <a 
+          href={link.href} 
+          class="block bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out group border border-transparent hover:border-red-500"
+        >
+          <div class="flex items-center text-red-600 mb-3">
+            <i class={`${link.icon} text-2xl mr-3 group-hover:scale-110 transition-transform`}></i>
+            <h2 class="text-xl font-semibold text-gray-800 group-hover:text-red-700 transition-colors">{link.title}</h2>
+          </div>
+          <p class="text-sm text-gray-600">{link.description}</p>
+          <div class="mt-4 text-right">
+            <span class="text-xs font-medium text-red-600 group-hover:underline">Przejdź &rarr;</span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    {/* You can add more sections here, e.g., site statistics, quick actions, etc. */}
+    
+  </div>
+
+  <Footer slot="footer" />
+</BaseLayout>

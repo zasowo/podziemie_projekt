@@ -1,0 +1,111 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { SITE_TITLE } from '@/consts';
+
+const mockContentItems = [
+  {
+    slug: "wwii-propaganda-collection",
+    title: "WWII Propaganda Collection",
+    category: "Poster",
+    imageUrl: "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80",
+    fullDescription: "This collection features 24 original World War II propaganda posters sourced from various European nations, including France, Germany, and the United Kingdom. These posters offer a compelling visual narrative of the war, reflecting diverse messaging strategies, artistic styles, and the socio-political climates of their origins. Detailed analysis of each poster, including translation and historical context, is provided.",
+    details: [
+        { label: "Origin", value: "Various European Nations" },
+        { label: "Period", value: "1939-1945" },
+        { label: "Number of Items", value: "24 Posters" },
+        { label: "Themes", value: "Patriotism, Recruitment, War Bonds, Enemy Depiction" }
+    ],
+  },
+  {
+    slug: "medieval-trade-records",
+    title: "Medieval Trade Records",
+    category: "Document",
+    imageUrl: "https://images.unsplash.com/photo-1542662565-7e4b66b83d3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80",
+    fullDescription: "An extensive archive of digitized records detailing Venetian merchant transactions from 1380 to 1420. These documents provide invaluable insights into Mediterranean trade routes, economic practices, and the flow of goods such as spices, textiles, and raw materials during the late medieval period.",
+    details: [
+        { label: "Origin", value: "Venice, Italy" },
+        { label: "Period", value: "1380-1420" },
+        { label: "Format", value: "Digitized Ledger Entries & Correspondence" }
+    ]
+  },
+  {
+    slug: "early-industrial-factories",
+    title: "Early Industrial Factories",
+    category: "Photo Collection",
+    imageUrl: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+    fullDescription: "Rare photographs of textile mills and factories in 19th century England, documenting working conditions and the societal impact of early industrialization. The collection highlights architectural changes, machinery, and the lives of workers during this transformative era.",
+    details: [
+        {label: "Origin", value: "United Kingdom"},
+        {label: "Period", value: "19th Century"},
+        {label: "Subject", value: "Industrial Revolution, Labor History"}
+    ]
+  }
+];
+
+const { slug } = Astro.params;
+const contentItem = mockContentItems.find(item => item.slug === slug);
+
+let pageTitle = contentItem ? contentItem.title : "Content Not Found";
+---
+<BaseLayout title={`${pageTitle} - ${SITE_TITLE}`} description={`Details for ${pageTitle}`}>
+  <Header slot="header" />
+
+  <div class="container mx-auto px-4 py-12">
+    {contentItem ? (
+      <article class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-xl">
+        <header class="mb-8 pb-6 border-b border-gray-200">
+          <div class="mb-4">
+            <span class="text-sm font-semibold text-red-600 bg-red-100 px-3 py-1 rounded-full">{contentItem.category}</span>
+          </div>
+          <h1 class="text-4xl lg:text-5xl font-bold text-gray-800 leading-tight">{contentItem.title}</h1>
+        </header>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="md:col-span-2">
+            <img src={contentItem.imageUrl} alt={contentItem.title} class="w-full h-auto object-cover rounded-lg shadow-md mb-6 max-h-[500px]" />
+            <h2 class="text-2xl font-semibold text-gray-700 mb-3">Description</h2>
+            <div class="prose max-w-none text-gray-700 leading-relaxed">
+              <p>{contentItem.fullDescription || "No detailed description available."}</p>
+            </div>
+          </div>
+          
+          <aside class="md:col-span-1">
+            <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+              <h3 class="text-xl font-semibold text-gray-700 mb-4">Details</h3>
+              <ul class="space-y-2 text-gray-600">
+                {contentItem.details?.map(detail => (
+                  <li>
+                    <strong class="font-medium text-gray-800">{detail.label}:</strong> {detail.value}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div class="mt-6">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">Actions</h3>
+                <a href="#" class="inline-block w-full text-center px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition font-medium mb-2">Request Access</a>
+                <a href="#" class="inline-block w-full text-center px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition font-medium">Add to Collection</a>
+            </div>
+          </aside>
+        </div>
+
+        <section class="mt-12 pt-8 border-t border-gray-200">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Discussion (Placeholder)</h2>
+            <p class="text-gray-600 italic">Comments for this type of content will be enabled soon.</p>
+        </section>
+
+      </article>
+    ) : (
+      <div class="text-center py-20">
+        <h1 class="text-4xl font-bold text-gray-700 mb-4">404 - Content Not Found</h1>
+        <p class="text-lg text-gray-600">Sorry, we couldn't find the content you were looking for.</p>
+        <a href="/" class="mt-8 inline-block px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition font-medium">
+          Back to Homepage
+        </a>
+      </div>
+    )}
+  </div>
+
+  <Footer slot="footer" />
+</BaseLayout>

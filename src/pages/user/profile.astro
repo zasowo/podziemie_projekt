@@ -1,0 +1,102 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { SITE_TITLE } from '@/consts';
+
+const user = Astro.locals.user;
+
+if (!user) {
+  return Astro.redirect('/user/signin?error=Session_Required_For_Profile');
+}
+
+const userBio = "Miłośnik odkrywania historycznych miejsc i dokumentowania nieopowiedzianych historii. Pasjonat zachowywania dziedzictwa kulturowego za pomocą środków cyfrowych. Obecnie badam XVIII-wieczną kartografię.";
+let userAvatarUrl: string | null = null; 
+const userInitials = user?.name ? user.name.charAt(0).toUpperCase() : (user?.email ? user.email.charAt(0).toUpperCase() : '?');
+---
+<BaseLayout title={`Mój Profil - ${SITE_TITLE}`}>
+  <Header slot="header" />
+
+  <div class="container mx-auto px-4 py-6 sm:py-8">
+    <div class="max-w-xl mx-auto bg-white p-5 sm:p-6 rounded-xl shadow-lg space-y-6">
+
+      {/* Section 1: User Information */}
+      <section aria-labelledby="user-info-heading">
+        <div class="flex items-start space-x-4">
+          <div id="avatar-display-container" class="w-20 h-20 sm:w-24 sm:h-24 bg-red-600 rounded-full flex items-center justify-center text-white text-3xl sm:text-4xl font-semibold shrink-0 shadow-md overflow-hidden">
+            {userAvatarUrl ? <img id="avatar-image-current" src={userAvatarUrl} alt={`Awatar ${user.name || user.email}`} class="w-full h-full object-cover" /> : <span id="avatar-initials-current">{userInitials}</span>}
+          </div>
+          <div class="flex-grow pt-1 sm:pt-0 min-w-0">
+            <h1 id="user-info-heading" class="text-xl sm:text-2xl font-bold text-gray-800 truncate">{user.name || 'Profil Użytkownika'}</h1>
+            <p class="text-sm text-gray-500 mt-0.5 truncate">{user.email}</p>
+            {user.role === 'admin' && <div class="mt-2"><a href="/admin" class="text-xs font-medium text-red-600 hover:text-red-700 transition-colors">Panel Admina &rarr;</a></div>}
+          </div>
+          <div class="ml-auto shrink-0 pt-1 text-right">
+            <label for="avatar-file-input" class="cursor-pointer text-xs text-red-600 hover:text-red-700 font-medium underline-offset-2 hover:underline">Zmień Zdjęcie</label>
+            <input type="file" id="avatar-file-input" name="avatar" class="hidden" accept="image/png, image/jpeg, image/webp" />
+          </div>
+        </div>
+      </section>
+
+      <hr class="border-gray-200" />
+
+      <div class="space-y-6">
+        <section aria-labelledby="edit-bio-heading">
+          <h2 id="edit-bio-heading" class="text-md font-semibold text-gray-700 mb-2">Edytuj Biogram</h2>
+          <form class="space-y-3">
+            <div>
+              <label for="bio" class="sr-only">Twój Biogram</label>
+              <textarea id="bio" name="bio" rows="4" class="block w-full text-sm border-gray-300 rounded-lg shadow-sm focus:ring-red-500 focus:border-red-500 p-2.5" placeholder="Opowiedz nam trochę o sobie...">{userBio}</textarea>
+            </div>
+            <div class="flex justify-end"><button type="button" class="px-4 py-1.5 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition">Zapisz Biogram</button></div>
+          </form>
+        </section>
+        <hr class="border-gray-200/60" />
+        <section aria-labelledby="change-email-heading">
+          <h2 id="change-email-heading" class="text-md font-semibold text-gray-700 mb-2">Zmień Adres Email</h2>
+          <form class="space-y-3">
+            <div><label for="current-email" class="block text-xs font-medium text-gray-600 mb-0.5">Aktualny Email</label><input type="email" id="current-email" name="current-email" value={user.email} disabled class="block w-full text-sm bg-gray-100 border-gray-300 rounded-md shadow-sm p-2" /></div>
+            <div><label for="new-email" class="block text-xs font-medium text-gray-600 mb-0.5">Nowy Email</label><input type="email" id="new-email" name="new-email" placeholder="Wpisz nowy email" required class="block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 p-2" /></div>
+            <div><label for="confirm-password-email" class="block text-xs font-medium text-gray-600 mb-0.5">Potwierdź Aktualne Hasło</label><input type="password" id="confirm-password-email" name="confirm-password-email" placeholder="Wpisz swoje hasło" required class="block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 p-2" /></div>
+            <div class="flex justify-end"><button type="button" class="px-4 py-1.5 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition">Zaktualizuj Email</button></div>
+          </form>
+        </section>
+        <hr class="border-gray-200/60" />
+        <section aria-labelledby="change-password-heading">
+          <h2 id="change-password-heading" class="text-md font-semibold text-gray-700 mb-2">Zmień Hasło</h2>
+          <form class="space-y-3">
+            <div><label for="current-password" class="block text-xs font-medium text-gray-600 mb-0.5">Aktualne Hasło</label><input type="password" id="current-password" name="current-password" placeholder="Wpisz aktualne hasło" required class="block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 p-2" /></div>
+            <div><label for="new-password" class="block text-xs font-medium text-gray-600 mb-0.5">Nowe Hasło</label><input type="password" id="new-password" name="new-password" placeholder="Wpisz nowe hasło" required class="block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 p-2" /></div>
+            <div><label for="confirm-new-password" class="block text-xs font-medium text-gray-600 mb-0.5">Potwierdź Nowe Hasło</label><input type="password" id="confirm-new-password" name="confirm-new-password" placeholder="Potwierdź nowe hasło" required class="block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 p-2" /></div>
+            <div class="flex justify-end"><button type="button" class="px-4 py-1.5 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition">Zaktualizuj Hasło</button></div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+  <Footer slot="footer" />
+  <script define:vars={{ initialUserAvatarUrl: userAvatarUrl, initialUserInitials: userInitials }}>
+    // Script remains the same as previously provided for avatar preview
+    const avatarFileInput = document.getElementById('avatar-file-input');
+    const avatarDisplayContainer = document.getElementById('avatar-display-container');
+    // The label for="avatar-file-input" handles triggering the click.
+
+    avatarFileInput?.addEventListener('change', (event) => {
+      const files = (event.target).files;
+      if (files && files.length > 0) {
+        const file = files[0];
+        console.log('Selected avatar file:', file.name); 
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (avatarDisplayContainer && e.target?.result) {
+            avatarDisplayContainer.innerHTML = `<img id="avatar-image-preview" src="${e.target.result}" alt="Avatar preview" class="w-full h-full object-cover rounded-full" />`;
+            avatarDisplayContainer.classList.remove('bg-red-600', 'text-white'); 
+            avatarDisplayContainer.classList.add('bg-gray-200');
+          }
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</BaseLayout>

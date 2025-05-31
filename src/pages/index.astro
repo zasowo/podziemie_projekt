@@ -1,0 +1,221 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+// AboutModal is in BaseLayout.astro
+import ContributeModal from '@/components/ContributeModal.astro';
+import Acknowledgements from '@/components/Acknowledgements.astro';
+import { getLatestPages, type Page, getLatestComments, type LatestCommentInfo } from '@/lib/pagedb';
+import { SITE_TITLE } from '@/consts';
+
+const latestPages: Page[] = await getLatestPages(6);
+const latestComments: LatestCommentInfo[] = await getLatestComments(3);
+
+const voivodeships = [
+  {
+    name: "Śląskie",
+    imageUrl: "/images/placeholders/placeholder-map-icon.svg", 
+    description: "Odkryj dziedzictwo historyczne i kulturowe województwa śląskiego.",
+    docCount: Math.floor(Math.random() * 41) + 10,
+    imageCount: Math.floor(Math.random() * 41) + 10,
+    iconClass: "fas fa-industry"
+  },
+  {
+    name: "Małopolskie",
+    imageUrl: "/images/placeholders/placeholder-map-icon.svg",
+    description: "Zabytki Krakowa, Tatry i bogata historia Małopolski.",
+    docCount: Math.floor(Math.random() * 41) + 10,
+    imageCount: Math.floor(Math.random() * 41) + 10,
+    iconClass: "fas fa-landmark" 
+  },
+  {
+    name: "Mazowieckie",
+    imageUrl: "/images/placeholders/placeholder-map-icon.svg",
+    description: "Warszawa i okolice – serce Polski pełne historycznych śladów.",
+    docCount: Math.floor(Math.random() * 41) + 10,
+    imageCount: Math.floor(Math.random() * 41) + 10,
+    iconClass: "fas fa-monument"
+  },
+  {
+    name: "Dolnośląskie",
+    imageUrl: "/images/placeholders/placeholder-map-icon.svg",
+    description: "Zamki, pałace i tajemnicze miejsca Dolnego Śląska czekają.",
+    docCount: Math.floor(Math.random() * 41) + 10,
+    imageCount: Math.floor(Math.random() * 41) + 10,
+    iconClass: "fas fa-chess-rook"
+  }
+];
+
+function formatDate(date: Date | string | undefined): string {
+  if (!date) return 'Brak daty';
+  return new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+function formatShortDate(date: Date | string | undefined): string {
+  if (!date) return 'Brak daty';
+  return new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+function truncateText(text: string | undefined, maxLength: number = 100): string {
+  if (!text) return '';
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + "...";
+}
+---
+<BaseLayout title={`Witaj w ${SITE_TITLE}`} description="Platforma poświęcona publikacjom podziemnym z okresu PRL. Odkrywaj i pomóż zachować historię.">
+  <Header slot="header" />
+  <ContributeModal /> 
+
+  {/* Hero Section (background already updated previously) */}
+  <section class="relative text-white py-20 lg:py-28 bg-gray-800">
+    <div class="absolute inset-0 opacity-[0.03] hero-pattern-svg-white"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-red-700/50 via-red-800/30 to-gray-900/70 opacity-80"></div>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-3xl mx-auto text-center">
+            <h1 class="text-4xl lg:text-5xl font-bold mb-4 text-shadow-md">Patrimonium: Archiwum Publikacji Podziemnych</h1>
+            <p class="text-lg lg:text-xl text-gray-200 mb-8 leading-relaxed text-shadow-sm">
+                Platforma poświęcona publikacjom podziemnym z okresu PRL: odkrywaj unikalne gazetki, zdjęcia, ulotki i inne materiały z całej Polski. Pomóż nam zachować tę historię!
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="/artykuly" class="px-8 py-3 bg-white text-red-700 rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 focus:ring-offset-gray-800 transition font-semibold text-lg shadow-md hover:shadow-lg transform hover:scale-105">
+                    Przeglądaj Artykuły
+                </a>
+                <button 
+                  id="learn-more-hero-button"
+                  type="button"
+                  class="px-8 py-3 border-2 border-white text-white rounded-md hover:bg-white hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 transition font-semibold text-lg shadow-md hover:shadow-lg transform hover:scale-105"
+                >
+                    Współtwórz
+                </button>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <div class="container mx-auto px-4 py-12">
+      
+    {/* Voivodeships Section - Updated link text */}
+    {voivodeships && voivodeships.length > 0 && (
+      <section class="mb-12 md:mb-16" aria-labelledby="browse-voivodeships-title">
+          <div class="flex justify-between items-center mb-6 md:mb-8">
+              <h2 id="browse-voivodeships-title" class="text-2xl md:text-3xl font-bold text-gray-800">Regiony Polski</h2>
+              {/* Changed text from "Zobacz na Mapie" to "Zobacz wszystkie" */}
+              <a href="/regiony" class="text-sm text-red-600 hover:text-red-700 hover:underline font-medium">Zobacz wszystkie &rarr;</a>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {voivodeships.map(voiv => (
+              <a href={`/region/${voiv.name.toLowerCase().replace(/\s+/g, '-')}`} class="category-card group block bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden flex flex-col transition-all duration-300 ease-in-out transform hover:-translate-y-1 h-full">
+                  <div class="h-40 bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-red-50 transition-colors relative">
+                      <i class={`${voiv.iconClass || 'fas fa-map-marked-alt'} text-5xl group-hover:text-red-400 transition-colors`}></i>
+                      <h3 class="absolute bottom-3 left-4 right-4 text-center text-white text-xl font-bold bg-black/40 px-2 py-1 rounded" title={voiv.name}>{voiv.name}</h3>
+                  </div>
+                  <div class="p-4 flex flex-col flex-grow">
+                      <p class="text-gray-600 text-xs mb-2 line-clamp-3 flex-grow" title={voiv.description}>{voiv.description}</p>
+                      <div class="flex justify-between text-xs text-gray-500 mt-auto pt-2 border-t border-gray-100">
+                          <span><i class="fas fa-file-alt mr-1 text-gray-400"></i> {voiv.docCount} dok.</span>
+                          <span><i class="fas fa-image mr-1 text-gray-400"></i> {voiv.imageCount} zdj.</span>
+                      </div>
+                  </div>
+              </a>
+            ))}
+          </div>
+      </section>
+    )}
+      
+     {/* Latest Articles Section - Updated comment count display */}
+    {latestPages && latestPages.length > 0 && (
+      <section class="mb-12 md:mb-16" aria-labelledby="latest-articles-title">
+          <div class="flex justify-between items-center mb-6 md:mb-8">
+              <h2 id="latest-articles-title" class="text-2xl md:text-3xl font-bold text-gray-800">Najnowsze Artykuły</h2>
+              <a href="/artykuly" class="text-sm text-red-600 hover:text-red-700 hover:underline font-medium">Zobacz Wszystkie &rarr;</a>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {latestPages.map(page => (
+              <a href={`/${page.slug}`} class="content-card group block bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden flex flex-col transition-all duration-300 ease-in-out transform hover:-translate-y-1 h-full">
+                  <div class="h-48 bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-red-50 transition-colors">
+                      <i class="fas fa-newspaper text-5xl group-hover:text-red-400 transition-colors"></i>
+                  </div>
+                  <div class="p-4 sm:p-5 flex flex-col flex-grow">
+                      <h3 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight mb-1.5 group-hover:text-red-700 transition-colors line-clamp-2" title={page.title}>
+                          {page.title}
+                      </h3>
+                      {/* Comment counter inline with date */}
+                      <div class="text-xs text-gray-500 mb-2">
+                          <span>Opublikowano: {formatShortDate(page.createdAt)}</span>
+                          <span class="mx-1.5">&bull;</span>
+                          <span class="inline-flex items-center text-red-600 font-semibold">
+                              <i class="fas fa-comment mr-1 opacity-75"></i>
+                              {page.comments?.length || 0}
+                          </span>
+                      </div>
+                      <p class="text-gray-600 text-sm mb-3 flex-grow line-clamp-3">
+                          Kliknij, aby dowiedzieć się więcej o tej publikacji.
+                      </p>
+                      <div class="text-xs text-red-600 font-medium group-hover:underline mt-auto pt-2">
+                          Czytaj dalej &rarr;
+                      </div>
+                  </div>
+              </a>
+            ))}
+          </div>
+      </section>
+    )}
+      
+    {/* Recent Discussions Section - Full article title */}
+    {latestComments && latestComments.length > 0 && (
+      <section class="mb-12 md:mb-16" aria-labelledby="recent-discussions-title">
+          <h2 id="recent-discussions-title" class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8">Ostatnie Dyskusje</h2>
+          <div class="bg-white rounded-lg shadow-xl">
+            <ul class="divide-y divide-gray-200">
+              {latestComments.map((commentInfo) => (
+                <li class="comment-display-item p-4 sm:p-5 flex items-start space-x-3">
+                    <div class="flex-shrink-0">
+                        <span class="inline-flex items-center justify-center h-9 w-9 rounded-full bg-red-500 text-sm font-semibold text-white" title={commentInfo.commenterName || 'Anonim'}>
+                            {commentInfo.commenterName ? commentInfo.commenterName.charAt(0).toUpperCase() : 'A'}
+                        </span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs sm:text-sm font-semibold text-gray-800">
+                            {commentInfo.commenterName || 'Anonimowy Użytkownik'}
+                            <span class="text-xs text-gray-500 font-normal ml-1.5">
+                                skomentował(a) <a href={`/${commentInfo.pageSlug}#comment-${commentInfo.commentId.toString()}`} class="text-red-600 hover:underline font-medium" title={commentInfo.pageTitle}>{commentInfo.pageTitle}</a> {/* Full page title */}
+                            </span>
+                        </p>
+                        <time datetime={new Date(commentInfo.commentCreatedAt).toISOString()} class="text-xs text-gray-400 mb-1 block">
+                            {formatDate(commentInfo.commentCreatedAt)}
+                        </time>
+                        <p class="text-sm text-gray-600 leading-relaxed line-clamp-2" title={commentInfo.commentText}>
+                            {commentInfo.commentText} 
+                        </p>
+                         <a href={`/${commentInfo.pageSlug}#comment-${commentInfo.commentId.toString()}`} class="text-xs text-red-500 hover:underline mt-1 inline-block">Zobacz komentarz &rarr;</a>
+                    </div>
+                </li>
+              ))}
+            </ul>
+            {/* "Zobacz Wszystkie Dyskusje" button removed */}
+          </div>
+      </section>
+    )}
+
+      <Acknowledgements /> 
+  </div>
+
+  <Footer slot="footer" />
+
+  <script>
+    const learnMoreHeroButton = document.getElementById('learn-more-hero-button');
+    learnMoreHeroButton?.addEventListener('click', () => {
+      if (typeof (window as any).openContributeModal === 'function') {
+        (window as any).openContributeModal();
+      } else {
+        console.error('openContributeModal function not found.');
+      }
+    });
+  </script>
+</BaseLayout>
+
+<style is:global>
+  .hero-pattern-svg-white { 
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwxKSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+  }
+  .text-shadow-sm { text-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+  .text-shadow-md { text-shadow: 0 2px 4px rgba(0,0,0,0.25); }
+</style>
