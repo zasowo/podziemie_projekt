@@ -1,5 +1,5 @@
 ---
-import { getPageBySlug, type Page, type Comment as DbComment } from '@/lib/pagedb';
+import { getPageBySlug, type Page } from '@/lib/pagedb';
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
@@ -7,6 +7,7 @@ import { ProsemirrorViewer } from "@/components/prosemirror-viewer";
 import CommentList from '@/components/CommentList';
 import CommentBox from '@/components/CommentBox';
 import { SITE_TITLE } from '@/consts';
+import { allSiteLocations } from '@/pages/regiony.astro'; // Importuj listę lokalizacji
 
 const { slug } = Astro.params;
 const userId = Astro.locals.user?.id;
@@ -15,49 +16,62 @@ const userRole = Astro.locals.role;
 const page: Page | null = await getPageBySlug(slug!);
 
 if (!page) {
-  return Astro.redirect('/404');
+  return Astro.redirect('/404'); 
 }
 
-// Process comments to ensure string IDs and align field names if necessary
+// Znajdź nazwę regionu na podstawie page.regionSlug
+const regionName = page.regionSlug 
+  ? allSiteLocations.find(loc => loc.slug === page.regionSlug)?.name 
+  : null;
+
 const processedComments = page.comments ? page.comments.map(commentFromDb => ({
-  ...commentFromDb, // Spreads all fields (name, comment, createdAt, updatedAt?)
+  ...commentFromDb, 
   _id: commentFromDb._id.toString(),
   userId: commentFromDb.userId.toString(),
 })) : [];
+
+function formatDate(date: Date | string | undefined): string {
+  if (!date) return 'N/A';
+  return new Date(date).toLocaleDateString('pl-PL', { 
+    year: 'numeric', month: 'long', day: 'numeric', 
+    hour: '2-digit', minute: '2-digit' 
+  });
+}
 ---
 <BaseLayout title={`${page.title} - ${SITE_TITLE}`}>
   <Header slot="header" />
 
   <div class="container mx-auto px-4 py-8 sm:py-12">
-    <article class="bg-white p-5 sm:p-6 md:p-8 rounded-xl shadow-xl"> {/* Adjusted padding slightly */}
+    <article class="bg-white p-5 sm:p-6 md:p-8 rounded-xl shadow-xl">
       <header class="mb-6 pb-4 border-b border-gray-200">
-        <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 leading-tight">{page.title}</h1>
-        <p class="text-sm text-gray-500 mt-2">
-          Opublikowano: {new Date(page.createdAt).toLocaleDateString('pl-PL', { year: 'numeric', month: 'long', day: 'numeric' })}
-        </p>
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 leading-tight">{page.title}</h1>
+        <div class="mt-2 text-sm">
+          <span class="text-gray-500">
+            Opublikowano: {new Date(page.createdAt).toLocaleDateString('pl-PL', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </span>
+          {/* Wyświetlanie regionu */}
+          {regionName && (
+            <span class="ml-3 pl-3 border-l border-gray-300 text-red-600 font-semibold">
+              <i class="fas fa-map-marker-alt mr-1.5 opacity-75"></i>Region: {regionName}
+            </span>
+          )}
+        </div>
       </header>
 
-      {/* Wrapper for content and comments to enforce consistent max-width */}
-      <div class="max-w-3xl mx-auto"> {/* Or max-w-2xl / max-w-4xl as you prefer */}
-        
-        {/* Prosemirror Content Viewer */}
+      <div class="max-w-3xl mx-auto"> 
         <div 
             class="prose prose-lg prose-p:text-gray-700 prose-headings:text-gray-800 prose-strong:text-gray-800 prose-a:text-red-600 hover:prose-a:text-red-700 max-w-none"
             id="tiptap-content-area"
         >
-          {/* The styling for the content itself primarily comes from simple-editor.scss */}
           <ProsemirrorViewer content={page.content} client:only="react" />
         </div>
 
-        {/* Comments Section */}
-        <section aria-labelledby="comments-heading" class="mt-10 pt-6 border-t border-gray-300"> {/* Slightly more prominent border */}
+        <section aria-labelledby="comments-heading" class="mt-10 pt-6 border-t border-gray-300">
           <h2 id="comments-heading" class="text-2xl font-semibold text-gray-800 mb-6">
             Komentarze ({processedComments?.length || 0})
           </h2>
-          
-          <div class="space-y-6"> {/* Space between CommentList and CommentBox */}
+          <div class="space-y-6"> 
             <CommentList comments={processedComments} postId={page._id.toString()} role={userRole} client:only="react" />
-
             {userId ? (
               <CommentBox postId={page._id.toString()} userId={userId} client:only="react" />
             ) : (
@@ -69,7 +83,7 @@ const processedComments = page.comments ? page.comments.map(commentFromDb => ({
             )}
           </div>
         </section>
-      </div> {/* End of max-w-3xl wrapper */}
+      </div>
     </article>
   </div>
 

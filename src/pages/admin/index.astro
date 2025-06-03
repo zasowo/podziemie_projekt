@@ -1,13 +1,12 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import Header from '@/components/Header.astro'; // Import Header
-import Footer from '@/components/Footer.astro'; // Import Footer
+import Header from '@/components/Header.astro'; 
+import Footer from '@/components/Footer.astro'; 
 import { SITE_TITLE } from '@/consts';
 
-// This page is protected by middleware for 'admin' role
+
 const user = Astro.locals.user;
 if (!user || user.role !== 'admin') {
-  // Fallback redirect, though middleware should handle this primarily
   return Astro.redirect('/user/signin?error=AdminAccessRequired');
 }
 
@@ -16,21 +15,14 @@ const adminLinks = [
     href: "/edytor/dodaj",
     title: "Dodaj Nową Stronę",
     description: "Utwórz i opublikuj nową stronę lub artykuł.",
-    icon: "fas fa-plus-circle" // Font Awesome icon
+    icon: "fas fa-plus-circle" 
   },
   {
     href: "/edytor/listastron",
     title: "Zarządzaj Treściami",
     description: "Edytuj lub usuń istniejące strony i publikacje.",
-    icon: "fas fa-edit" // Font Awesome icon
+    icon: "fas fa-edit" 
   },
-  // Add more admin links here as needed, e.g., User Management, Site Settings etc.
-  // {
-  //   href: "/admin/users",
-  //   title: "Zarządzaj Użytkownikami",
-  //   description: "Przeglądaj i modyfikuj konta użytkowników.",
-  //   icon: "fas fa-users-cog"
-  // }
 ];
 ---
 <BaseLayout title={`Panel Administratora - ${SITE_TITLE}`}>
@@ -59,9 +51,6 @@ const adminLinks = [
         </a>
       ))}
     </div>
-
-    {/* You can add more sections here, e.g., site statistics, quick actions, etc. */}
-    
   </div>
 
   <Footer slot="footer" />

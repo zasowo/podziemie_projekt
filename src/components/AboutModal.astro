@@ -1,5 +1,5 @@
 ---
-// No props needed, content and logic are self-contained
+
 ---
 <div 
   id="about-modal-overlay"
@@ -20,10 +20,10 @@
         class="text-gray-700 hover:text-red-600 p-1 -m-1" 
         aria-label="Zamknij modal"
       >
-        <i class="fas fa-times text-xl"></i> {/* Font Awesome icon */}
+        <i class="fas fa-times text-xl"></i> 
       </button>
     </div>
-    {/* Content from your React component */}
+    
     <div class="text-gray-700 space-y-3 text-sm max-h-[70vh] overflow-y-auto modal-content-scroll pr-2">
       <p>
         Podziemie to cyfrowa platforma poświęcona eksploracji, dokumentacji i ochronie historycznych artefaktów, miejsc i wydarzeń z Polski.
@@ -84,7 +84,7 @@
       modalPanel.classList.remove('scale-100');
       setTimeout(() => {
         modalOverlay.classList.add('pointer-events-none');
-      }, 300); // Match transition duration
+      }, 300); 
       document.body.style.overflow = 'unset';
       document.removeEventListener('keydown', handleEscapeKey);
     }
@@ -105,24 +105,24 @@
   closeIcon?.addEventListener('click', closeModal);
   closeButton?.addEventListener('click', closeModal);
 
-  // Expose openModal function to be callable from other scripts
+ 
   (window as any).openAboutModal = openModal;
 </script>
 
 <style is:global>
-  /* Custom scrollbar for modal content if needed */
+  
   .modal-content-scroll::-webkit-scrollbar {
     width: 6px;
   }
   .modal-content-scroll::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Light grey track */
+    background: #f1f1f1; 
     border-radius: 10px;
   }
   .modal-content-scroll::-webkit-scrollbar-thumb {
-    background: #c5c5c5; /* Medium grey thumb */
+    background: #c5c5c5; 
     border-radius: 10px;
   }
   .modal-content-scroll::-webkit-scrollbar-thumb:hover {
-    background: #a0a0a0; /* Darker grey thumb on hover */
+    background: #a0a0a0; 
   }
 </style>

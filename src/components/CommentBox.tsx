@@ -48,8 +48,7 @@ const CommentBox: React.FC<CommentBoxProps> = ({ postId, userId }) => {
   };
 
   return (
-    // Removed max-w-2xl mx-auto. w-full will make it take the width of its parent container in Astro.
-    <div className="p-4 sm:p-6 bg-white rounded-lg shadow-md border border-gray-200 w-full mt-6"> {/* Added mt-6 for spacing from CommentList */}
+    <div className="p-4 sm:p-6 bg-white rounded-lg shadow-md border border-gray-200 w-full mt-6">
       <h4 className="text-lg font-semibold text-gray-800 mb-3">Dodaj komentarz</h4>
       <form onSubmit={handleSubmit} className="space-y-3">
         <textarea

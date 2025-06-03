@@ -1,7 +1,8 @@
 ---
 import '@/styles/global.css'; 
 import { SITE_TITLE as DEFAULT_SITE_TITLE, SITE_DESCRIPTION as DEFAULT_SITE_DESCRIPTION } from '@/consts';
-import AboutModal from '@/components/AboutModal.astro'; // Ensure AboutModal is imported
+import AboutModal from '@/components/AboutModal.astro';
+import OtherOrganizationsModal from '@/components/OtherOrganizationsModal.astro'; // <-- IMPORT nowego modala
 
 export interface Props {
   title?: string;
@@ -19,17 +20,18 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <title>{title} - {DEFAULT_SITE_TITLE}</title> {/* Changed to use DEFAULT_SITE_TITLE here too */}
+    <title>{title} - {DEFAULT_SITE_TITLE}</title>
     
     <link rel="stylesheet" href="/node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
   </head>
   <body class="flex flex-col min-h-screen bg-gray-100 text-gray-800 font-sans">
-    <slot name="header" /> {/* Header is slotted in */}
+    <slot name="header" />
     <main class="flex-grow w-full">
-      <slot /> {/* Individual page content */}
+      <slot />
     </main>
-    <slot name="footer" /> {/* Footer is slotted in */}
+    <slot name="footer" />
     
-    <AboutModal /> {/* AboutModal instance for global availability */}
+    <AboutModal />
+    <OtherOrganizationsModal /> {/* <-- DODAJ nowy modal tutaj */}
   </body>
 </html>

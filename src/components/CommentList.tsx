@@ -1,20 +1,19 @@
 // src/components/CommentList.tsx
 import React from 'react';
-// No need to import DbComment here if CommentForDisplay defines all needed fields
-// import type { Comment as DbComment } from '@/lib/pagedb';
+
 
 interface CommentForDisplay {
   _id: string;
   userId: string;
-  name: string;    // Already expecting this from previous styling
-  comment: string; // Already expecting this from previous styling
-  createdAt: Date; // <-- ADDED THIS FIELD
-  updatedAt?: Date; // Optional, if you decide to use it
-  userRole?: string; // Optional
+  name: string;    
+  comment: string; 
+  createdAt: Date;
+  updatedAt?: Date;
+  userRole?: string; 
 }
 
 interface CommentListProps {
-  comments: CommentForDisplay[] | null; // Now uses the updated CommentForDisplay
+  comments: CommentForDisplay[] | null; 
   postId: string;
   role: string | null | undefined;
 }
@@ -49,7 +48,7 @@ const CommentList: React.FC<CommentListProps> = ({ comments, postId, role }) => 
 
   return (
     <ul className="space-y-6">
-      {comments.map((comment) => ( // comment is now of type CommentForDisplay which includes createdAt
+      {comments.map((comment) => ( 
         <li key={comment._id} className="p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200/80">
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0">
@@ -62,7 +61,6 @@ const CommentList: React.FC<CommentListProps> = ({ comments, postId, role }) => 
                 <p className="text-sm font-semibold text-gray-800">
                   {comment.name || 'Anonimowy Użytkownik'}
                 </p>
-                {/* This will now work as comment.createdAt is part of CommentForDisplay */}
                 <time dateTime={new Date(comment.createdAt).toISOString()} className="text-xs text-gray-400">
                   {new Date(comment.createdAt).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </time>

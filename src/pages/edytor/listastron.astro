@@ -16,12 +16,10 @@ if (role === "admin") {
   pages = await getUserPages(user.id);
 }
 
-// Middleware should protect this page, but as a fallback:
 if (!user || (role !== 'admin' && role !== 'edytor')) {
   return Astro.redirect('/user/signin?error=EditorAccessRequired');
 }
 
-// Helper function to format dates (only for createdAt now)
 function formatDate(dateString: Date | string | undefined) {
   if (!dateString) return 'N/A';
   return new Date(dateString).toLocaleDateString('pl-PL', {
@@ -50,7 +48,7 @@ function formatDate(dateString: Date | string | undefined) {
           {pages.map(page => (
             <li class="p-4 sm:p-6 hover:bg-gray-50/70 transition-colors duration-150">
               <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div class="flex-grow min-w-0"> {/* min-w-0 for truncation */}
+                <div class="flex-grow min-w-0"> 
                   <h2 class="text-lg sm:text-xl font-semibold text-gray-800 truncate">
                     <a href={`/${page.slug}`} class="hover:text-red-700 hover:underline" title={`Zobacz stronę: ${page.title}`}>
                       {page.title}
@@ -61,7 +59,6 @@ function formatDate(dateString: Date | string | undefined) {
                   </p>
                   <p class="text-xs text-gray-500 mt-1">
                     <span class="font-medium">Utworzono:</span> {formatDate(page.createdAt)}
-                    {/* Updated By / Author can be added here if creatorId is resolved to a name */}
                     </p>
                 </div>
                 <div class="flex items-center space-x-2 sm:space-x-3 shrink-0 mt-3 sm:mt-0">
@@ -86,7 +83,6 @@ function formatDate(dateString: Date | string | undefined) {
             </li>
           ))}
         </ul>
-        {/* Optional: Pagination if the list becomes very long */}
       </div>
     ) : (
       <div class="text-center py-16 bg-white rounded-xl shadow-lg">
@@ -144,9 +140,9 @@ function formatDate(dateString: Date | string | undefined) {
             setTimeout(() => {
                 listItem?.remove();
                 if (document.querySelectorAll(".delete-link").length === 0) {
-                    window.location.reload(); // Reload to show empty state if it's the last item
+                    window.location.reload(); 
                 }
-            }, 500); // Remove after transition
+            }, 500); 
           } else {
             const result = await res.json().catch(() => ({ message: "Wystąpił błąd przy usuwaniu strony." }));
             alert(`Błąd: ${result.message}`);

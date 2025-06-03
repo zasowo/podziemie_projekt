@@ -12,8 +12,8 @@ export const auth = betterAuth({
     enabled: true,
   },
   session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24, // 1 day
+    expiresIn: 60 * 60 * 24 * 7, 
+    updateAge: 60 * 60 * 24, 
   },
   user: {
     additionalFields: {
@@ -26,12 +26,10 @@ export const auth = betterAuth({
   },
   callbacks: {
     async signIn(user: any, request: any) {
-      // Fetch role from database during sign in
       const userDoc = await db.collection("users").findOne({ 
         email: user.email 
       })
       
-      // Return user with role
       return {
         user: {
           ...user,

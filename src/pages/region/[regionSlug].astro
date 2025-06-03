@@ -1,29 +1,48 @@
 ---
+// src/pages/region/[regionSlug].astro
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
-import { getAllPages, type Page } from "@/lib/pagedb"; 
-import { SITE_TITLE } from '@/consts'; 
+import { getPagesByRegion, type Page } from "@/lib/pagedb";
+import { allSiteLocations } from '@/pages/regiony.astro'; // Aby pobrać nazwę regionu
+import { SITE_TITLE } from '@/consts';
 
-const allArticles: Page[] = await getAllPages(); 
+export async function getStaticPaths() {
+  // Generuj ścieżki dla wszystkich zdefiniowanych regionów
+  return allSiteLocations.map(location => ({
+    params: { regionSlug: location.slug },
+  }));
+}
+
+const { regionSlug } = Astro.params;
+
+// Znajdź pełne dane regionu (w tym nazwę) na podstawie sluga
+const currentRegion = allSiteLocations.find(loc => loc.slug === regionSlug);
+const regionName = currentRegion ? currentRegion.name : regionSlug; // Użyj sluga jako fallback
+
+const articlesInRegion: Page[] = regionSlug ? await getPagesByRegion(regionSlug) : [];
+
 function formatShortDate(date: Date | string | undefined): string {
   if (!date) return 'Brak daty';
   return new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: 'long', year: 'numeric' });
 }
-
 ---
-<BaseLayout title={`Artykuły - ${SITE_TITLE}`}>
+<BaseLayout title={`Region: ${regionName} - ${SITE_TITLE}`}>
   <Header slot="header" />
 
   <div class="container mx-auto px-4 py-8 sm:py-12">
     <header class="mb-10 text-center border-b border-gray-200 pb-6">
-      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800">Archiwum Publikacji</h1>
-      <p class="text-gray-600 mt-2 text-lg">Przeglądaj wszystkie dostępne artykuły i materiały.</p>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800">
+        Region: {regionName}
+      </h1>
+      {currentRegion?.description && (
+        <p class="text-gray-600 mt-2 text-lg">{currentRegion.description}</p>
+      )}
     </header>
 
-    {allArticles && allArticles.length > 0 ? (
+    {articlesInRegion && articlesInRegion.length > 0 ? (
       <div class="space-y-6">
-        {allArticles.map(article => (
+        {articlesInRegion.map(article => (
           <article class="bg-white p-5 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out">
             <a href={`/${article.slug}`} class="block group">
               <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 group-hover:text-red-700 transition-colors mb-1.5 line-clamp-2" title={article.title}>
@@ -51,13 +70,11 @@ function formatShortDate(date: Date | string | undefined): string {
     ) : (
       <div class="text-center py-12">
         <i class="fas fa-folder-open text-6xl text-gray-300 mb-5"></i>
-        <h2 class="text-xl font-semibold text-gray-700 mb-2">Brak Artykułów</h2>
-        <p class="text-gray-500 text-sm">Obecnie nie ma żadnych opublikowanych artykułów.</p>
-         {Astro.locals.role === 'admin' && ( 
-          <a href="/edytor/dodaj" class="mt-6 inline-block px-6 py-3 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition">
-            Dodaj Pierwszy Artykuł
-          </a>
-        )}
+        <h2 class="text-xl font-semibold text-gray-700 mb-2">Brak Artykułów w Regionie: {regionName}</h2>
+        <p class="text-gray-500 text-sm">Obecnie nie ma żadnych opublikowanych artykułów przypisanych do tego regionu.</p>
+         <a href="/regiony" class="mt-6 inline-block px-6 py-3 text-sm font-medium text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition">
+            Zobacz inne regiony
+        </a>
       </div>
     )}
   </div>

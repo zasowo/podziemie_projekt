@@ -44,7 +44,6 @@ export const POST: APIRoute = async ({ request }) => {
                 }
             );
         }
-        // Create the new comment object
         const newComment = {
             _id: new ObjectId(),
             userId: new ObjectId(session.user.id),
@@ -65,7 +64,6 @@ export const POST: APIRoute = async ({ request }) => {
             } as any
         );
 
-        // Check if post was found
         if (result.matchedCount === 0) {
             return new Response(
                 JSON.stringify({ error: 'Strona nie została znaleziona' }),
@@ -76,7 +74,6 @@ export const POST: APIRoute = async ({ request }) => {
             );
         }
 
-        // Check if comment was actually added
         if (result.modifiedCount === 0) {
             return new Response(
                 JSON.stringify({ error: 'Nie udało się dodać komentarza' }),

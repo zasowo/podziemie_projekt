@@ -1,11 +1,9 @@
 ---
-// src/pages/regiony.astro
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import { SITE_TITLE } from '@/consts';
 
-// Definicja i eksport WYŁĄCZNIE wybranych lokalizacji
 export const allSiteLocations = [
   { name: "Dolnośląskie", slug: "dolnoslaskie", description: "Zamki, pałace i tajemnicze miejsca Dolnego Śląska.", iconClass: "fas fa-chess-rook" },
   { name: "Lubelskie", slug: "lubelskie", description: "Malownicze Roztocze, renesansowe Zamość i Lublin.", iconClass: "fas fa-leaf" },
@@ -19,10 +17,9 @@ export const allSiteLocations = [
   { name: "Zachodniopomorskie", slug: "zachodniopomorskie", description: "Wybrzeże Bałtyku, porty i wyspy.", iconClass: "fas fa-anchor" }
 ];
 
-// Sortowanie alfabetyczne dla strony /regiony
 const sortedLocationsToDisplay = [...allSiteLocations].sort((a, b) => a.name.localeCompare(b.name, 'pl'));
 ---
-<BaseLayout title={`Regiony - ${SITE_TITLE}`}> {/* Zmieniono tytuł na bardziej ogólny */}
+<BaseLayout title={`Regiony - ${SITE_TITLE}`}> 
   <Header slot="header" />
 
   <div class="container mx-auto px-4 py-8 sm:py-12">

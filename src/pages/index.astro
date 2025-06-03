@@ -2,27 +2,37 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
-// AboutModal jest teraz w BaseLayout.astro
+// AboutModal jest teraz w BaseLayout.astro, więc nie importujemy go tutaj bezpośrednio
 import ContributeModal from '@/components/ContributeModal.astro';
 import Acknowledgements from '@/components/Acknowledgements.astro';
-import { getLatestPages, type Page, getLatestComments, type LatestCommentInfo } from '@/lib/pagedb';
-import { SITE_TITLE } from '@/consts';
-// Zaimportuj zaktualizowaną listę lokalizacji Z PLIKU regiony.astro
-// Zakładamy, że regiony.astro eksportuje 'allSiteLocations'
+import { getLatestPages, getAllPages, type Page, getLatestComments, type LatestCommentInfo } from '@/lib/pagedb'; //
+import { SITE_TITLE } from '@/consts'; //
+// Importuj listę lokalizacji zdefiniowaną i wyeksportowaną w regiony.astro
 import { allSiteLocations } from './regiony.astro'; 
 
-// Pobieranie dynamicznych danych (bez zmian)
+// --- Dynamiczne dane ---
 const latestPages: Page[] = await getLatestPages(6);
 const latestComments: LatestCommentInfo[] = await getLatestComments(3);
+const allPagesForCounts: Page[] = await getAllPages(); // Pobierz wszystkie strony do zliczenia artykułów w regionach
 
-// Użyj zaimportowanej listy allSiteLocations i dodaj losowe liczniki
-const voivodeshipsDataWithRandomCounts = allSiteLocations.map(loc => ({
+// --- Logika dla Kafelków Regionów ---
+// Obliczanie rzeczywistej liczby artykułów dla każdego regionu
+const regionArticleCounts: Record<string, number> = {};
+allPagesForCounts.forEach(page => {
+  if (page.regionSlug) { 
+    regionArticleCounts[page.regionSlug] = (regionArticleCounts[page.regionSlug] || 0) + 1;
+  }
+});
+
+// Przygotowanie danych dla kafelków regionów z rzeczywistą liczbą artykułów
+const voivodeshipsDataWithActualCounts = allSiteLocations.map(loc => ({
   ...loc, // Przekopiuj istniejące dane (name, slug, iconClass, description)
-  docCount: Math.floor(Math.random() * 41) + 10, // Dodaj losowe liczniki
-  imageCount: Math.floor(Math.random() * 41) + 10,
+  articleCount: regionArticleCounts[loc.slug] || 0, // Rzeczywista liczba artykułów
+  // Możesz dodać inne liczniki, np. ogólną liczbę dokumentów, jeśli `docCount` ma inne znaczenie
+  genericDocCount: Math.floor(Math.random() * 41) + 10, // Zachowujemy jako przykład, jeśli potrzebne
 }));
 
-// Funkcja do tasowania tablicy (bez zmian)
+// Funkcja do tasowania tablicy
 function shuffleArray<T>(array: T[]): T[] {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i--) {
@@ -32,11 +42,11 @@ function shuffleArray<T>(array: T[]): T[] {
   return newArray;
 }
 
-// Wybór 4 losowych województw do wyświetlenia z zaimportowanej i rozszerzonej listy
-const displayLimitRegions = Math.min(4, allSiteLocations.length); // Zabezpieczenie, gdyby było mniej niż 4 regiony
-const randomVoivodeshipsToDisplay = shuffleArray(voivodeshipsDataWithRandomCounts).slice(0, displayLimitRegions);
+// Wybór 4 losowych województw do wyświetlenia
+const displayLimitRegions = Math.min(4, voivodeshipsDataWithActualCounts.length); 
+const randomVoivodeshipsToDisplay = shuffleArray(voivodeshipsDataWithActualCounts).slice(0, displayLimitRegions);
 
-// Funkcje pomocnicze (bez zmian)
+// --- Funkcje Pomocnicze ---
 function formatDate(date: Date | string | undefined): string {
   if (!date) return 'Brak daty';
   return new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -55,18 +65,23 @@ function truncateText(text: string | undefined, maxLength: number = 100): string
   <Header slot="header" />
   <ContributeModal /> 
 
-  {/* Sekcja Hero (bez zmian z Twojego kodu) */}
-  <section class="relative text-white py-20 lg:py-28 bg-gray-800">
-    <div class="absolute inset-0 opacity-[0.03] hero-pattern-svg-white"></div>
-    <div class="absolute inset-0 bg-gradient-to-br from-red-700/50 via-red-800/30 to-gray-900/70 opacity-80"></div>
-    <div class="container mx-auto px-4 relative z-10">
+   {/* Sekcja Hero */}
+  <section 
+    class="relative text-white py-20 lg:py-28 bg-gray-900 hero-pattern" 
+    style="--hero-pattern-opacity: 0.05;" 
+  >
+    {/* Gradient jako osobna warstwa pod wzorem (jeśli wzór jest częściowo przezroczysty) lub nad (jeśli wzór jest tłem) */}
+    {/* W tym przypadku, hero-pattern jest na bg-gray-900, a gradient jest dodatkową warstwą dla koloru */}
+    <div class="absolute inset-0 bg-gradient-to-br from-red-700/50 via-red-800/30 to-gray-900/80 opacity-85"></div> {/* Zmniejszono opacity gradientu, aby wzór był bardziej widoczny */}
+    
+    <div class="container mx-auto px-4 relative z-10"> {/* Treść nad gradientem i wzorem */}
         <div class="max-w-3xl mx-auto text-center">
-            <h1 class="text-4xl lg:text-5xl font-bold mb-4 text-shadow-md">Patrimonium: Archiwum Publikacji Podziemnych</h1>
+            <h1 class="text-4xl lg:text-5xl font-bold mb-4 text-shadow-md">Podziemie: Archiwum Publikacji</h1>
             <p class="text-lg lg:text-xl text-gray-200 mb-8 leading-relaxed text-shadow-sm">
                 Platforma poświęcona publikacjom podziemnym z okresu PRL: odkrywaj unikalne gazetki, zdjęcia, ulotki i inne materiały z całej Polski. Pomóż nam zachować tę historię!
             </p>
             <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                 <a href="/artykuly" class="px-8 py-3 bg-white text-red-700 rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 focus:ring-offset-gray-800 transition font-semibold text-lg shadow-md hover:shadow-lg transform hover:scale-105">
+                <a href="/artykuly" class="px-8 py-3 bg-white text-red-700 rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 focus:ring-offset-gray-800 transition font-semibold text-lg shadow-md hover:shadow-lg transform hover:scale-105">
                     Przeglądaj Artykuły
                 </a>
                 <button 
@@ -83,7 +98,7 @@ function truncateText(text: string | undefined, maxLength: number = 100): string
 
   <div class="container mx-auto px-4 py-12">
       
-    {/* --- ZMODYFIKOWANA SEKCJA REGIONY POLSKI --- */}
+    {/* Sekcja Regiony Polski */}
     {randomVoivodeshipsToDisplay && randomVoivodeshipsToDisplay.length > 0 && (
       <section class="mb-12 md:mb-16" aria-labelledby="browse-regions-title">
           <div class="flex justify-between items-center mb-6 md:mb-8">
@@ -97,17 +112,16 @@ function truncateText(text: string | undefined, maxLength: number = 100): string
                 class="category-card group block bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden flex flex-col transition-all duration-300 ease-in-out transform hover:-translate-y-1 h-full" 
               >
                   <div class="h-40 bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-red-50 transition-colors relative">
-                      {/* Użycie iconClass z zaimportowanych danych */}
                       <i class={`${voiv.iconClass || 'fas fa-map-marked-alt'} text-5xl group-hover:text-red-400 transition-colors`}></i>
                       <h3 class="absolute bottom-3 left-4 right-4 text-center text-white text-xl font-bold bg-black/40 px-2 py-1 rounded truncate" title={voiv.name}>{voiv.name}</h3>
                   </div>
-                  {/* Div z p-4 również musi być flex-col, aby flex-grow na opisie działał i mt-auto na statystykach */}
                   <div class="p-4 flex flex-col flex-grow"> 
                       <p class="text-gray-600 text-xs mb-2 line-clamp-3 flex-grow" title={voiv.description}>{voiv.description || `Odkryj materiały z regionu ${voiv.name}.`}</p>
-                      {/* mt-auto na statystykach, aby wypchnąć je na dół */}
-                      <div class="flex justify-between text-xs text-gray-500 mt-auto pt-2 border-t border-gray-100"> 
-                          <span><i class="fas fa-file-alt mr-1 text-gray-400"></i> {voiv.docCount} dok.</span>
-                          <span><i class="fas fa-image mr-1 text-gray-400"></i> {voiv.imageCount} zdj.</span>
+                      {/* Wyświetlanie rzeczywistej liczby artykułów */}
+                      <div class="text-xs text-gray-600 mt-auto pt-2 border-t border-gray-100"> 
+                          <span class="font-medium text-gray-700 inline-flex items-center">
+                            <i class="fas fa-archive mr-1.5 text-gray-400"></i> Artykuły: {voiv.articleCount} 
+                          </span>
                       </div>
                   </div>
               </a>
@@ -115,47 +129,57 @@ function truncateText(text: string | undefined, maxLength: number = 100): string
           </div>
       </section>
     )}
-    {/* --- KONIEC ZMODYFIKOWANEJ SEKCJI REGIONY POLSKI --- */}
     
-    {/* Sekcja Najnowsze Artykuły (bez zmian z Twojego kodu) */}
+    {/* Sekcja Najnowsze Artykuły */}
     {latestPages && latestPages.length > 0 && (
       <section class="mb-12 md:mb-16" aria-labelledby="latest-articles-title">
           <div class="flex justify-between items-center mb-6 md:mb-8">
               <h2 id="latest-articles-title" class="text-2xl md:text-3xl font-bold text-gray-800">Najnowsze Artykuły</h2>
-<a href="/artykuly" class="text-sm text-red-600 hover:text-red-700 hover:underline font-medium">Zobacz Wszystkie &rarr;</a>
+              <a href="/artykuly" class="text-sm text-red-600 hover:text-red-700 hover:underline font-medium">Zobacz Wszystkie &rarr;</a>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {latestPages.map(page => (
-              <a href={`/${page.slug}`} class="content-card group block bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden flex flex-col transition-all duration-300 ease-in-out transform hover:-translate-y-1 h-full">
-                  <div class="h-48 bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-red-50 transition-colors">
-                      <i class="fas fa-newspaper text-5xl group-hover:text-red-400 transition-colors"></i>
-                  </div>
-                  <div class="p-4 sm:p-5 flex flex-col flex-grow">
-                      <h3 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight mb-1.5 group-hover:text-red-700 transition-colors line-clamp-2" title={page.title}>
-                          {page.title}
-                      </h3>
-                      <div class="text-xs text-gray-500 mb-2">
-                          <span>Opublikowano: {formatShortDate(page.createdAt)}</span>
-                          <span class="mx-1.5">&bull;</span>
-                          <span class="inline-flex items-center text-red-600 font-semibold">
-                              <i class="fas fa-comment mr-1 opacity-75"></i>
-                              {page.comments?.length || 0}
+            {latestPages.map(page => {
+              const regionName = page.regionSlug 
+                ? allSiteLocations.find(loc => loc.slug === page.regionSlug)?.name 
+                : null;
+              return (
+                <a href={`/${page.slug}`} class="content-card group block bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden flex flex-col transition-all duration-300 ease-in-out transform hover:-translate-y-1 h-full">
+                    <div class="h-48 bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-red-50 transition-colors relative">
+                        <i class="fas fa-newspaper text-5xl group-hover:text-red-400 transition-colors"></i>
+                        {regionName && (
+                          <span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow">
+                            {regionName}
                           </span>
-                      </div>
-                      <p class="text-gray-600 text-sm mb-3 flex-grow line-clamp-3">
-                          Kliknij, aby dowiedzieć się więcej o tej publikacji.
-                      </p>
-                      <div class="text-xs text-red-600 font-medium group-hover:underline mt-auto pt-2">
-                          Czytaj dalej &rarr;
-                      </div>
-                  </div>
-              </a>
-            ))}
+                        )}
+                    </div>
+                    <div class="p-4 sm:p-5 flex flex-col flex-grow">
+                        <h3 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight mb-1.5 group-hover:text-red-700 transition-colors line-clamp-2" title={page.title}>
+                            {page.title}
+                        </h3>
+                        {/* Licznik komentarzy w jednej linii z datą */}
+                        <div class="text-xs text-gray-500 mb-2">
+                            <span>Opublikowano: {formatShortDate(page.createdAt)}</span>
+                            <span class="mx-1.5">&bull;</span>
+                            <span class="inline-flex items-center text-red-600 font-semibold">
+                                <i class="fas fa-comment mr-1 opacity-75"></i>
+                                {page.comments?.length || 0}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-3 flex-grow line-clamp-3">
+                            Kliknij, aby dowiedzieć się więcej o tej publikacji.
+                        </p>
+                        <div class="text-xs text-red-600 font-medium group-hover:underline mt-auto pt-2">
+                            Czytaj dalej &rarr;
+                        </div>
+                    </div>
+                </a>
+              );
+            })}
           </div>
       </section>
     )}
       
-    {/* Sekcja Ostatnie Dyskusje (bez zmian z Twojego kodu, przycisk "Zobacz wszystkie" usunięty wcześniej) */}
+    {/* Sekcja Ostatnie Dyskusje */}
     {latestComments && latestComments.length > 0 && (
       <section class="mb-12 md:mb-16" aria-labelledby="recent-discussions-title">
           <h2 id="recent-discussions-title" class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8">Ostatnie Dyskusje</h2>
@@ -209,7 +233,7 @@ function truncateText(text: string | undefined, maxLength: number = 100): string
 
 <style is:global>
   .hero-pattern-svg-white { 
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwxKSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZHRoPSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwxKSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
   }
   .text-shadow-sm { text-shadow: 0 1px 2px rgba(0,0,0,0.15); }
   .text-shadow-md { text-shadow: 0 2px 4px rgba(0,0,0,0.25); }

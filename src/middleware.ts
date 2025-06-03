@@ -1,4 +1,3 @@
-// src/middleware.ts
 import { defineMiddleware } from "astro:middleware";
 import { auth } from "./auth";
 
@@ -11,7 +10,7 @@ const protectedRoutes = {
   '/api/edytor/add-page': ['admin', 'edytor'],
   '/api/edytor/edit-page': ['admin', 'edytor'],
   '/api/edytor/delete-page': ['admin', 'edytor'],
-  '/user/profile': ['user', 'edytor', 'admin'] // Profile page protection
+  '/user/profile': ['user', 'edytor', 'admin'] 
 } as const;
 
 function matchesRoute(path: string, pattern: string): boolean {
@@ -60,7 +59,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
       }
 
       if (!hasRequiredRole(context.locals.role, requiredRoles)) {
-        // Make sure you have an /unauthorized page or redirect to home
         return Response.redirect(new URL('/unauthorized', context.request.url), 302); 
       }
     }
@@ -76,7 +74,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
     );
     
     if (isProtectedRoute) {
-      // Fallback redirect in case of error during session check for a protected route
       return Response.redirect(new URL('/user/signin?error=MiddlewareAuthError', context.request.url), 302);
     }
   }

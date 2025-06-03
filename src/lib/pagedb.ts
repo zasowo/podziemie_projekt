@@ -44,6 +44,7 @@ export interface Page {
   createdAt: Date;
   updatedAt?: Date;   // Dla śledzenia aktualizacji
   comments?: Comment[];
+  regionSlug?: string | null;
 }
 
 export interface LatestCommentInfo {
@@ -54,7 +55,15 @@ export interface LatestCommentInfo {
   commenterName: string;
   commentText: string;
   commentCreatedAt: Date;
-  // userRole?: string; // Uncomment if you want to include userRole
+}
+
+export async function getPagesByRegion(regionSlug: string): Promise<Page[]> {
+  const db = await connectToDatabase();
+  const pagesCollection = db.collection<Page>('pages');
+  const pages = await pagesCollection.find({ regionSlug: regionSlug })
+    .sort({ createdAt: -1 })
+    .toArray();
+  return pages;
 }
 
 export async function getLatestPages(limit: number = 6): Promise<Page[]> {
@@ -67,14 +76,13 @@ export async function getLatestPages(limit: number = 6): Promise<Page[]> {
   return pages;
 }
 
-// src/lib/pagedb.ts (getLatestComments function refined)
 export async function getLatestComments(limit: number = 3): Promise<LatestCommentInfo[]> {
   const db = await connectToDatabase();
   const pagesCollection = db.collection<Page>('pages');
 
   const pagesWithComments = await pagesCollection.find(
     { "comments": { $exists: true, $not: { $size: 0 } } },
-    { projection: { _id: 1, title: 1, slug: 1, comments: 1 } } // Fetch the full comments array
+    { projection: { _id: 1, title: 1, slug: 1, comments: 1 } } 
   ).toArray();
 
   let allCommentsFlat: LatestCommentInfo[] = [];
@@ -85,19 +93,18 @@ export async function getLatestComments(limit: number = 3): Promise<LatestCommen
           pageId: page._id,
           pageTitle: page.title,
           pageSlug: page.slug,
-          commentId: comment._id, // This is ObjectId
+          commentId: comment._id, 
           commenterName: comment.name,
           commentText: comment.comment,
           commentCreatedAt: comment.createdAt,
-          // userRole: comment.userRole (optional)
         });
       });
     }
   });
 
-  // Sort all extracted comments by their creation date, newest first
+ 
   allCommentsFlat.sort((a, b) => new Date(b.commentCreatedAt).getTime() - new Date(a.commentCreatedAt).getTime());
 
-  // Return the top 'limit' comments
+
   return allCommentsFlat.slice(0, limit);
 }

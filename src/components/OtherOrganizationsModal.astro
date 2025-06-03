@@ -1,0 +1,143 @@
+---
+// src/components/OtherOrganizationsModal.astro
+interface Organization {
+  name: string;
+  wikipediaLink: string;
+}
+
+const organizations: Organization[] = [
+  { 
+    name: "Federacja Młodzieży Walczącej", 
+    wikipediaLink: "https://pl.wikipedia.org/wiki/Federacja_M%C5%82odzie%C5%BCy_Walcz%C4%85cej" 
+  },
+  { 
+    name: "Konfederacja Polski Niepodległej", 
+    wikipediaLink: "https://pl.wikipedia.org/wiki/Konfederacja_Polski_Niepodleg%C5%82ej" 
+  },
+  { 
+    name: "Niezależne Zrzeszenie Studentów", 
+    wikipediaLink: "https://pl.wikipedia.org/wiki/Niezale%C5%BCne_Zrzeszenie_Student%C3%B3w" 
+  },
+  { 
+    name: "Solidarność Walcząca", 
+    wikipediaLink: "https://pl.wikipedia.org/wiki/Solidarno%C5%9B%C4%87_Walcz%C4%85ca" 
+  }
+];
+---
+<div 
+  id="other-orgs-modal-overlay"
+  aria-modal="true"
+  role="dialog"
+  aria-labelledby="other-orgs-modal-title"
+  class="fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"
+> {/* Zwiększono z-index na wypadek innych modali */}
+  <div 
+    id="other-orgs-modal-panel"
+    class="bg-white rounded-lg w-full max-w-2xl mx-auto p-6 shadow-xl transform scale-95 transition-transform duration-300 ease-in-out"
+  >
+    <div class="flex justify-between items-center mb-6">
+      <h3 id="other-orgs-modal-title" class="text-xl lg:text-2xl font-semibold text-gray-800">Inne Organizacje Opozycyjne</h3>
+      <button 
+        id="other-orgs-modal-close-icon"
+        type="button"
+        class="text-gray-600 hover:text-red-600 p-1 -m-1" 
+        aria-label="Zamknij modal"
+      >
+        <i class="fas fa-times text-2xl"></i>
+      </button>
+    </div>
+    <div class="text-gray-700 space-y-6 text-sm max-h-[70vh] overflow-y-auto modal-content-scroll pr-3">
+      <p class="text-gray-600 mb-4">
+        Poniżej znajduje się lista wybranych organizacji opozycyjnych działających w okresie PRL. Zasoby dotyczące tych organizacji będą sukcesywnie dodawane do naszego archiwum.
+      </p>
+      <ul class="space-y-5">
+        {organizations.map(org => (
+          <li class="pb-4 border-b border-gray-200 last:border-b-0 last:pb-0">
+            <div class="flex justify-between items-start sm:items-center gap-2">
+              <h4 class="text-md sm:text-lg font-semibold text-gray-700">{org.name}</h4>
+              <a 
+                href={org.wikipediaLink} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="text-xs sm:text-sm text-sky-600 hover:text-sky-700 hover:underline whitespace-nowrap inline-flex items-center"
+                title={`Przeczytaj o ${org.name} na Wikipedii`}
+              >
+                Wikipedia <i class="fas fa-external-link-alt ml-1.5 text-xs"></i>
+              </a>
+            </div>
+            <p class="text-xs text-gray-500 mt-1 italic">
+              Materiały dotyczące tej organizacji będą dostępne wkrótce.
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="mt-8 text-right">
+      <button 
+        id="other-orgs-modal-close-button"
+        type="button"
+        class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium text-sm"
+      >
+        Zamknij
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modalOverlayOrgs = document.getElementById('other-orgs-modal-overlay') as HTMLElement;
+  const modalPanelOrgs = document.getElementById('other-orgs-modal-panel') as HTMLElement;
+  const closeIconOrgs = document.getElementById('other-orgs-modal-close-icon');
+  const closeButtonOrgs = document.getElementById('other-orgs-modal-close-button');
+
+  function openOtherOrgsModal() {
+    if (modalOverlayOrgs && modalPanelOrgs) {
+      modalOverlayOrgs.classList.remove('opacity-0', 'pointer-events-none');
+      modalOverlayOrgs.classList.add('opacity-100');
+      modalPanelOrgs.classList.remove('scale-95');
+      modalPanelOrgs.classList.add('scale-100');
+      document.body.style.overflow = 'hidden';
+      document.addEventListener('keydown', handleEscapeKeyOrgs);
+    }
+  }
+
+  function closeOtherOrgsModal() {
+    if (modalOverlayOrgs && modalPanelOrgs) {
+      modalOverlayOrgs.classList.add('opacity-0');
+      modalOverlayOrgs.classList.remove('opacity-100');
+      modalPanelOrgs.classList.add('scale-95');
+      modalPanelOrgs.classList.remove('scale-100');
+      setTimeout(() => {
+        modalOverlayOrgs.classList.add('pointer-events-none');
+      }, 300); 
+      document.body.style.overflow = 'unset';
+      document.removeEventListener('keydown', handleEscapeKeyOrgs);
+    }
+  }
+
+  function handleEscapeKeyOrgs(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      closeOtherOrgsModal();
+    }
+  }
+
+  modalOverlayOrgs?.addEventListener('click', (event) => {
+    if (event.target === modalOverlayOrgs) {
+      closeOtherOrgsModal();
+    }
+  });
+
+  closeIconOrgs?.addEventListener('click', closeOtherOrgsModal);
+  closeButtonOrgs?.addEventListener('click', closeOtherOrgsModal);
+
+  // Upublicznij funkcję otwierania modala
+  (window as any).openOtherOrgsModal = openOtherOrgsModal;
+</script>
+
+{/* Styl dla paska przewijania modala, jeśli nie jest globalny */}
+<style is:global>
+  .modal-content-scroll::-webkit-scrollbar { width: 6px; }
+  .modal-content-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+  .modal-content-scroll::-webkit-scrollbar-thumb { background: #c5c5c5; border-radius: 10px; }
+  .modal-content-scroll::-webkit-scrollbar-thumb:hover { background: #a0a0a0; }
+</style>

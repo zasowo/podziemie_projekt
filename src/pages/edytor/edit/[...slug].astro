@@ -2,47 +2,54 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
-import EdytorStron from '@/components/edytor-stron.tsx'; // Upewnij się, że rozszerzenie jest poprawne
+import EdytorStron from '@/components/edytor-stron.tsx'; // Upewnij się, że rozszerzenie jest poprawne (.tsx lub .jsx)
 import { getPageBySlug, type Page } from '@/lib/pagedb';    //
 import { SITE_TITLE } from '@/consts';                 //
 
+// --- Twoja istniejąca logika pobierania sluga i danych strony ---
 const { slug } = Astro.params;
 
 if (slug === undefined) {
-  throw new Error(`Brak identyfikatora (slug) strony do edycji.`);
+    // W produkcji rozważ przekierowanie do strony 404
+    // return Astro.redirect('/404?error=BrakSlugDoEdycji'); 
+    throw new Error(`Brak identyfikatora (slug) strony do edycji.`);
 } 
 
-const page = await getPageBySlug(slug); 
+const page = await getPageBySlug(slug); // Zakładamy, że getPageBySlug i połączenie z bazą danych działają poprawnie
 if (!page) {
-  throw new Error(`Strona o adresie "${slug}" nie została znaleziona.`);
+    // W produkcji rozważ przekierowanie do strony 404
+    // return Astro.redirect(`/404?error=StronaNieZnaleziona&slug=${slug}`);
+    throw new Error(`Strona o adresie "${slug}" nie została znaleziona.`);
 }
 
-// Logika autoryzacji (zakładamy, że jest poprawna i user/page.creatorId są dostępne)
+// --- Twoja istniejąca logika autoryzacji ---
+// Upewnij się, że typ Page w pagedb.ts zawiera pole creatorId, jeśli ta logika jest aktywna
 const user = Astro.locals.user;
 const userRole = Astro.locals.role;
 let canEdit = false;
 if (userRole === 'admin') {
   canEdit = true;
-// Upewnij się, że typ Page w pagedb.ts zawiera creatorId, jeśli ta logika jest aktywna
 } else if (userRole === 'edytor' && user && page.creatorId?.toString() === user.id) { 
   canEdit = true;
 }
 
 if (!canEdit) {
-  // W produkcji lepiej przekierować do strony /unauthorized
-  // return Astro.redirect('/unauthorized');
+  // W produkcji rozważ przekierowanie do strony /unauthorized
+  // return Astro.redirect(`/unauthorized?message=BrakUprawnienDoEdycji&target=${slug}`);
   throw new Error("Brak uprawnień do edycji tej strony.");
 }
 
-// Przygotowanie propsów zgodnie z interfejsem EdytorStronProps
-const contentToEdit = page.content;
-const titleForEditor = page.title;
-const slugForEditor = page.slug; 
+// Przygotowanie propsów dla EdytorStron zgodnie z ostatnimi ustaleniami
+const contentToEdit = page.content;        // Prop 'content' dla EdytorStron
+const titleForEditor = page.title;       // Prop 'existingTitle' dla EdytorStron
+const slugForEditor = page.slug;         // Prop 'existingSlug' dla EdytorStron
+const regionSlugForEditor = page.regionSlug; // Prop 'existingRegionSlug' dla EdytorStron
 ---
 
 <BaseLayout title={`Edycja: ${page.title} - ${SITE_TITLE}`}>
   <Header slot="header" />
 
+  {/* Ten kontener i struktura nagłówka powinny pasować do strony dodaj.astro */}
   <div class="container mx-auto px-4 py-8 sm:py-12">
     <header class="mb-8 text-center sm:text-left">
       <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Edytuj Stronę</h1>
@@ -51,14 +58,16 @@ const slugForEditor = page.slug;
       </p>
     </header>
 
+    {/* Ten div zapewnia stylowanie "karty" dla obszaru edytora */}
     <div class="bg-white p-6 sm:p-8 rounded-xl shadow-xl">
-      <!-- Poprawione przekazywanie propsów -->
+      {/* Props przekazywane do EdytorStron zgodnie z interfejsem EdytorStronProps */}
       <EdytorStron 
         content={contentToEdit}
         existingTitle={titleForEditor}
         existingSlug={slugForEditor}
+        existingRegionSlug={regionSlugForEditor}
         isEditing={true}
-        client:only="react" 
+        client:only="react"
       />
     </div>
   </div>

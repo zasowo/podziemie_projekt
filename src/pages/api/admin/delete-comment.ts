@@ -39,7 +39,7 @@ export const DELETE: APIRoute = async ({ request }) => {
                 );
             }
 
-            // Check if comment was actually removed
+        
             if (result.modifiedCount === 0) {
                 return new Response(
                     JSON.stringify({ error: 'Nie znaleziono komentarza' }),

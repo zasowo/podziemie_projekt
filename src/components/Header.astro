@@ -1,39 +1,39 @@
 ---
 import { SITE_TITLE } from '@/consts'; // SITE_TITLE to "Podziemie"
-const user = Astro.locals.user;
+const user = Astro.locals.user; // Dostęp do danych użytkownika z middleware
 
 // Zaktualizowane linki nawigacyjne
 const navLinks = [
   // "Częstochowa" jest obsługiwana osobno dla wyróżnienia
-  { href: "/artykuly", text: "Zasoby" },
-  { href: "/inne-organizacje", text: "Inne Organizacje" },
+  { href: "/artykuly", text: "Zasoby" }, // Zmieniono z "Odkrywaj", href wskazuje na listę artykułów
+  // "Inne Organizacje" i "O Projekcie" są teraz przyciskami otwierającymi modale
 ];
 ---
 <header class="bg-white shadow-sm hero-pattern sticky top-0 z-50">
   <div class="container mx-auto px-4 py-4">
     <div class="flex justify-between items-center">
-      {/* Sekcja Logo - Zaktualizowana Ikona */}
+      {/* Sekcja Logo - Zaktualizowana Ikona i Czcionka dla SITE_TITLE */}
       <a 
         href="/" 
         class="group flex items-center space-x-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded-sm"
         aria-label="Strona główna Patrimonium"
       >
         <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center transition-transform duration-300 ease-in-out group-hover:scale-110 group-hover:shadow-lg">
-          <i class="fas fa-flag text-white text-lg"></i> {/* Zmieniono ikonę na fa-flag */}
+          <i class="fas fa-flag text-white text-lg"></i> {/* Zmieniona ikona na fa-flag */}
         </div>
-        {/* Ten h1 użyje czcionki Lora z global.css */}
-        <h1 class="font-serif text-2xl font-bold text-gray-800 transition-colors duration-300 ease-in-out group-hover:text-red-700">
+        {/* Ten h1 użyje czcionki Lora (font-serif) z global.css lub tailwind.config.mjs */}
+        <h1 class="text-2xl font-bold text-gray-800 transition-colors duration-300 ease-in-out group-hover:text-red-700 font-serif">
           {SITE_TITLE}
         </h1>
       </a>
       
-      {/* Centrum: Linki Nawigacyjne - Zwiększone odstępy i wyrównanie do linii bazowej */}
-      <nav class="hidden md:flex items-baseline space-x-6 lg:space-x-8"> {/* Zwiększone odstępy, items-baseline */}
+      {/* Centrum: Linki Nawigacyjne - Zwiększone odstępy, wyrównanie do linii bazowej */}
+      <nav class="hidden md:flex items-baseline space-x-6 lg:space-x-8"> {/* Zwiększone odstępy */}
         {/* Wyróżniony Link "Częstochowa" - Usunięto podświetlenie */}
         <a 
-          href="/" 
+          href="/region/czestochowa"  
           class="nav-link text-red-600 hover:text-red-700 font-semibold transition-colors duration-150 whitespace-nowrap text-lg pb-0.5"
-          aria-current={Astro.url.pathname === '/' ? 'page' : undefined} 
+          aria-current={Astro.url.pathname === '/region/czestochowa' || Astro.url.pathname === '/' ? 'page' : undefined} 
           style="" 
         >
           Częstochowa
@@ -42,23 +42,31 @@ const navLinks = [
           <a 
             href={link.href} 
             class="nav-link text-gray-700 hover:text-red-600 font-medium transition-colors duration-150 whitespace-nowrap pt-0.5" 
-            aria-current={Astro.url.pathname === link.href || (link.href === "/artykuly" && Astro.url.pathname.startsWith("/artykuly")) ? 'page' : undefined}
+            aria-current={Astro.url.pathname.startsWith(link.href) ? 'page' : undefined}
           >
             {link.text}
           </a>
         ))}
         <button 
+          id="header-other-orgs-button"
+          type="button"
+          class="nav-link text-gray-700 hover:text-red-600 font-medium transition-colors duration-150 whitespace-nowrap pt-0.5"
+        >
+          Inne Organizacje
+        </button>
+        <button 
           id="header-about-button"
           type="button"
-          class="nav-link text-gray-700 hover:text-red-600 font-medium transition-colors duration-150 whitespace-nowrap pt-0.5" 
+          class="nav-link text-gray-700 hover:text-red-600 font-medium transition-colors duration-150 whitespace-nowrap pt-0.5"
         >
           O Projekcie
         </button>
       </nav>
       
-      {/* Prawo: Akcje uwierzytelniania i Przełącznik Menu Mobilnego - Zwiększone odstępy */}
+      {/* Prawo: Akcje autoryzacji i Przełącznik Menu Mobilnego - Zwiększone odstępy */}
       <div class="flex items-center space-x-4 md:space-x-5"> {/* Zwiększone odstępy */}
-        <div class="flex items-center space-x-3 md:space-x-4" style="min-width: auto; justify-content: flex-end;"> {/* Zwiększone odstępy wewnętrzne */}
+        {/* Kontener dla elementów autoryzacji */}
+        <div class="flex items-center space-x-3 md:space-x-4" style="min-width: auto; justify-content: flex-end;">
           {user ? (
             <>
               <span class="hidden sm:inline text-sm text-gray-600 whitespace-nowrap">
@@ -95,16 +103,17 @@ const navLinks = [
 
   {/* Menu Mobilne */}
   <div id="mobile-menu" class="md:hidden hidden bg-white shadow-lg py-2">
-    <a href="/" class="block px-4 py-2 text-red-600 hover:bg-red-50 font-semibold">Częstochowa</a>
+    <a href="/region/czestochowa" class="block px-4 py-2 text-red-600 hover:bg-red-50 font-semibold">Częstochowa</a>
     {navLinks.map(link => (
       <a 
         href={link.href} 
         class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600"
-        aria-current={Astro.url.pathname === link.href || (link.href === "/artykuly" && Astro.url.pathname.startsWith("/artykuly")) ? 'page' : undefined}
+        aria-current={Astro.url.pathname.startsWith(link.href) ? 'page' : undefined}
       >
         {link.text}
       </a>
     ))}
+    <button id="mobile-header-other-orgs-button" type="button" class="w-full text-left block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">Inne Organizacje</button>
     <button id="mobile-header-about-button" type="button" class="w-full text-left block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">O Projekcie</button>
     <hr class="my-1 border-gray-200" />
     {user ? (
@@ -161,13 +170,13 @@ const navLinks = [
     }
   });
   
-  // --- Wyzwalacze Modala "O Projekcie" (Desktop i Mobilne) ---
+  // --- Wyzwalacz Modala "O Projekcie" ---
   const headerAboutButton = document.getElementById('header-about-button');
   headerAboutButton?.addEventListener('click', () => {
     if (typeof (window as any).openAboutModal === 'function') {
       (window as any).openAboutModal();
     } else {
-      console.error('Nie znaleziono funkcji openAboutModal na obiekcie window (nagłówek desktop).');
+      console.error('Nie znaleziono funkcji openAboutModal (desktop).');
       alert('Funkcja "O Projekcie" jest tymczasowo niedostępna.');
     }
   });
@@ -176,10 +185,31 @@ const navLinks = [
   mobileHeaderAboutButton?.addEventListener('click', () => {
     if (typeof (window as any).openAboutModal === 'function') {
       (window as any).openAboutModal();
-      mobileMenu?.classList.add('hidden'); // Opcjonalnie zamknij menu mobilne
+      mobileMenu?.classList.add('hidden'); 
     } else {
-      console.error('Nie znaleziono funkcji openAboutModal na obiekcie window (nagłówek mobilny).');
+      console.error('Nie znaleziono funkcji openAboutModal (mobilne).');
       alert('Funkcja "O Projekcie" jest tymczasowo niedostępna.');
+    }
+  });
+
+  // --- Wyzwalacz Modala "Inne Organizacje" ---
+  const headerOtherOrgsButton = document.getElementById('header-other-orgs-button');
+  headerOtherOrgsButton?.addEventListener('click', () => {
+    if (typeof (window as any).openOtherOrgsModal === 'function') {
+      (window as any).openOtherOrgsModal();
+    } else {
+      console.error('Nie znaleziono funkcji openOtherOrgsModal (desktop).');
+      alert('Funkcja "Inne Organizacje" jest tymczasowo niedostępna.');
+    }
+  });
+  const mobileHeaderOtherOrgsButton = document.getElementById('mobile-header-other-orgs-button');
+  mobileHeaderOtherOrgsButton?.addEventListener('click', () => {
+    if (typeof (window as any).openOtherOrgsModal === 'function') {
+      (window as any).openOtherOrgsModal();
+      mobileMenu?.classList.add('hidden');
+    } else {
+      console.error('Nie znaleziono funkcji openOtherOrgsModal (mobilne).');
+      alert('Funkcja "Inne Organizacje" jest tymczasowo niedostępna.');
     }
   });
 </script>
