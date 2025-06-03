@@ -1,0 +1,71 @@
+---
+// src/pages/regiony.astro
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { SITE_TITLE } from '@/consts';
+
+// Definicja i eksport WYŁĄCZNIE wybranych lokalizacji
+export const allSiteLocations = [
+  { name: "Dolnośląskie", slug: "dolnoslaskie", description: "Zamki, pałace i tajemnicze miejsca Dolnego Śląska.", iconClass: "fas fa-chess-rook" },
+  { name: "Lubelskie", slug: "lubelskie", description: "Malownicze Roztocze, renesansowe Zamość i Lublin.", iconClass: "fas fa-leaf" },
+  { name: "Łódzkie", slug: "lodzkie", description: "Postindustrialne dziedzictwo Łodzi i centralna Polska.", iconClass: "fas fa-industry" },
+  { name: "Małopolskie", slug: "malopolskie", description: "Zabytki Krakowa, Tatry i bogata historia regionu.", iconClass: "fas fa-landmark" },
+  { name: "Mazowieckie", slug: "mazowieckie", description: "Warszawa i okolice – serce Polski pełne historycznych śladów.", iconClass: "fas fa-monument" },
+  { name: "Pomorskie", slug: "pomorskie", description: "Bałtyckie plaże, Trójmiasto i kaszubskie tradycje.", iconClass: "fas fa-ship" },
+  { name: "Śląskie", slug: "slaskie", description: "Odkryj dziedzictwo przemysłowe i kulturowe Górnego Śląska.", iconClass: "fas fa-cogs" },
+  { name: "Częstochowa", slug: "czestochowa", description: "Jasna Góra i duchowe serce Polski.", iconClass: "fas fa-church" },
+  { name: "Wielkopolskie", slug: "wielkopolskie", description: "Kolebka państwa polskiego i dynamiczny Poznań.", iconClass: "fas fa-wheat-awn" },
+  { name: "Zachodniopomorskie", slug: "zachodniopomorskie", description: "Wybrzeże Bałtyku, porty i wyspy.", iconClass: "fas fa-anchor" }
+];
+
+// Sortowanie alfabetyczne dla strony /regiony
+const sortedLocationsToDisplay = [...allSiteLocations].sort((a, b) => a.name.localeCompare(b.name, 'pl'));
+---
+<BaseLayout title={`Regiony - ${SITE_TITLE}`}> {/* Zmieniono tytuł na bardziej ogólny */}
+  <Header slot="header" />
+
+  <div class="container mx-auto px-4 py-8 sm:py-12">
+    <header class="mb-10 text-center">
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800">Przeglądaj Publikacje według Regionu</h1>
+      <p class="text-gray-600 mt-2 text-lg">Wybierz region lub miejscowość, aby zobaczyć powiązane materiały.</p>
+    </header>
+
+    {sortedLocationsToDisplay && sortedLocationsToDisplay.length > 0 ? (
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+        {sortedLocationsToDisplay.map(location => (
+          <a 
+            href={`/region/${location.slug}`} 
+            class="group block bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform hover:-translate-y-1.5 hover:scale-105"
+            title={`Zobacz publikacje z regionu: ${location.name}`}
+          >
+            <div class="flex flex-col items-center text-center">
+              <div class="mb-4 text-red-500 group-hover:text-red-600 transition-colors duration-300">
+                <i class={`${location.iconClass || 'fas fa-map-marker-alt'} text-5xl`}></i>
+              </div>
+              <h2 class="text-xl font-semibold text-gray-800 group-hover:text-red-700 transition-colors duration-300">
+                {location.name}
+              </h2>
+              {location.description && (
+                <p class="text-xs text-gray-500 mt-1 line-clamp-2">{location.description}</p>
+              )}
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-12">
+        <i class="fas fa-map-signs text-6xl text-gray-300 mb-5"></i>
+        <h2 class="text-xl font-semibold text-gray-700 mb-2">Brak Zdefiniowanych Regionów</h2>
+        <p class="text-gray-500 text-sm">Obecnie nie ma dostępnych regionów do przeglądania.</p>
+      </div>
+    )}
+     <div class="mt-12 text-center">
+        <a href="/" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition font-medium text-sm">
+            &larr; Powrót do Strony Głównej
+        </a>
+    </div>
+  </div>
+
+  <Footer slot="footer" />
+</BaseLayout>

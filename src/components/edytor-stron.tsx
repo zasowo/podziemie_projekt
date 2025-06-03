@@ -104,7 +104,10 @@ const EdytorStron = ({ content, existingTitle, existingSlug, isEditing = false }
       </div>
       
       {/* SimpleEditor handles its own form submission logic via its internal button */}
-      <SimpleEditor onSubmit={handleSubmit} existingContent={content} />
+      <SimpleEditor
+        onSubmit={handleSubmit}
+        existingContent={content} // Przekazuje content (jako existingContent dla SimpleEditor)
+      />
     </div>
   );
 };

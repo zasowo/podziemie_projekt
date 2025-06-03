@@ -1,24 +1,67 @@
 ---
-import { getPageBySlug } from '@/lib/pagedb';
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import EdytorStron from '@/components/edytor-stron';
-import '@/styles/_variables.scss'
-import '@/styles/_keyframe-animations.scss'
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import EdytorStron from '@/components/edytor-stron.tsx'; // Upewnij się, że rozszerzenie jest poprawne
+import { getPageBySlug, type Page } from '@/lib/pagedb';    //
+import { SITE_TITLE } from '@/consts';                 //
 
-// Extract slug from the URL
 const { slug } = Astro.params;
-const autorId = Astro.locals.user?.id;
 
-// Fetch all pages (or query the specific one)
-if (slug == undefined){
-    throw new Error(`Brak parametru`)
+if (slug === undefined) {
+  throw new Error(`Brak identyfikatora (slug) strony do edycji.`);
 } 
-const page = await getPageBySlug(slug);
+
+const page = await getPageBySlug(slug); 
 if (!page) {
-    throw new Error(`Strona "${slug}" nie została znaleziona.`);
+  throw new Error(`Strona o adresie "${slug}" nie została znaleziona.`);
 }
+
+// Logika autoryzacji (zakładamy, że jest poprawna i user/page.creatorId są dostępne)
+const user = Astro.locals.user;
+const userRole = Astro.locals.role;
+let canEdit = false;
+if (userRole === 'admin') {
+  canEdit = true;
+// Upewnij się, że typ Page w pagedb.ts zawiera creatorId, jeśli ta logika jest aktywna
+} else if (userRole === 'edytor' && user && page.creatorId?.toString() === user.id) { 
+  canEdit = true;
+}
+
+if (!canEdit) {
+  // W produkcji lepiej przekierować do strony /unauthorized
+  // return Astro.redirect('/unauthorized');
+  throw new Error("Brak uprawnień do edycji tej strony.");
+}
+
+// Przygotowanie propsów zgodnie z interfejsem EdytorStronProps
+const contentToEdit = page.content;
+const titleForEditor = page.title;
+const slugForEditor = page.slug; 
 ---
 
-<BaseLayout title="Edycja strony">
-    <EdytorStron content={page.content} existingSlug={slug} client:only></EdytorStron>
+<BaseLayout title={`Edycja: ${page.title} - ${SITE_TITLE}`}>
+  <Header slot="header" />
+
+  <div class="container mx-auto px-4 py-8 sm:py-12">
+    <header class="mb-8 text-center sm:text-left">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Edytuj Stronę</h1>
+      <p class="text-gray-600 mt-1">
+        Modyfikujesz publikację: <span class="font-semibold text-red-600">{page.title}</span>
+      </p>
+    </header>
+
+    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-xl">
+      <!-- Poprawione przekazywanie propsów -->
+      <EdytorStron 
+        content={contentToEdit}
+        existingTitle={titleForEditor}
+        existingSlug={slugForEditor}
+        isEditing={true}
+        client:only="react" 
+      />
+    </div>
+  </div>
+
+  <Footer slot="footer" />
 </BaseLayout>

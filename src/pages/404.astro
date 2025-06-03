@@ -1,8 +1,44 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Header from "@/components/Header.astro"; 
+import Footer from "@/components/Footer.astro"; 
+import { SITE_TITLE } from "@/consts";
 ---
 
-<BaseLayout>
-    <h1>Nie znaleziono strony</h1>
-    <h2><a href="/">Powrót do strony głównej</a></h2>
+<BaseLayout title={`404 - Nie Znaleziono Strony - ${SITE_TITLE}`}>
+  <Header slot="header" />
+
+  {/* Main content area for 404 message - significantly reduced vertical padding and no min-height trick */}
+  <main class="flex-grow"> {/* Added flex-grow to allow footer to stick to bottom if content is very short */}
+    <div class="container mx-auto px-4 py-10 sm:py-16 text-center flex flex-col items-center justify-center"> {/* Reduced py-16 sm:py-24 to py-10 sm:py-16, removed min-h calculation */}
+      
+      <div class="max-w-md"> 
+        {/* "404" text - made smaller */}
+        <div class="text-7xl sm:text-8xl font-bold text-red-500 mb-3">404</div> {/* Reduced size and mb-4 to mb-3 */}
+        
+        {/* Heading - made smaller */}
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2"> {/* Reduced size and mb-3 to mb-2 */}
+          Ups! Strona Nie Znaleziona.
+        </h1>
+        
+        {/* Paragraph - made smaller and less margin */}
+        <p class="text-gray-600 mb-6 text-sm sm:text-base leading-relaxed"> {/* Reduced size and mb-8 to mb-6 */}
+          Przepraszamy, strona, której szukasz, nie istnieje, została przeniesiona lub jest tymczasowo niedostępna.
+        </p>
+        
+        {/* Button - made slightly smaller */}
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+          <a 
+            href="/" 
+            class="px-6 py-2.5 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition font-semibold text-base shadow-md hover:shadow-lg transform hover:scale-105" 
+          >
+            <i class="fas fa-home mr-1.5"></i>Powrót do Strony Głównej {/* Reduced icon margin */}
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <Footer slot="footer" />
 </BaseLayout>

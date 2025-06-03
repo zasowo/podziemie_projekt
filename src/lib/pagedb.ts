@@ -32,16 +32,18 @@ export interface Comment {
   comment: string;
   name: string;
   userId: ObjectId | string;
-  createdAt: Date;
+  createdAt: Date; 
 }
 
 export interface Page {
   _id: ObjectId;
   title: string;
   slug: string;
-  content: object;
+  content: object; 
+  creatorId: ObjectId; // Ważne dla autoryzacji edytora
   createdAt: Date;
-  comments: Comment[];
+  updatedAt?: Date;   // Dla śledzenia aktualizacji
+  comments?: Comment[];
 }
 
 export interface LatestCommentInfo {
