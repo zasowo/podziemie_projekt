@@ -10,7 +10,7 @@ if (!user) {
   return Astro.redirect('/user/signin?error=Session_Required_For_Profile');
 }
 
-const userBio = "Miłośnik odkrywania historycznych miejsc i dokumentowania nieopowiedzianych historii. Pasjonat zachowywania dziedzictwa kulturowego za pomocą środków cyfrowych. Obecnie badam XVIII-wieczną kartografię.";
+
 let userAvatarUrl: string | null = null; 
 const userInitials = user?.name ? user.name.charAt(0).toUpperCase() : (user?.email ? user.email.charAt(0).toUpperCase() : '?');
 ---
@@ -32,25 +32,11 @@ const userInitials = user?.name ? user.name.charAt(0).toUpperCase() : (user?.ema
             {user.role === 'admin' && <div class="mt-2"><a href="/admin" class="text-xs font-medium text-red-600 hover:text-red-700 transition-colors">Panel Admina &rarr;</a></div>}
           </div>
           <div class="ml-auto shrink-0 pt-1 text-right">
-            <label for="avatar-file-input" class="cursor-pointer text-xs text-red-600 hover:text-red-700 font-medium underline-offset-2 hover:underline">Zmień Zdjęcie</label>
             <input type="file" id="avatar-file-input" name="avatar" class="hidden" accept="image/png, image/jpeg, image/webp" />
           </div>
         </div>
       </section>
-
-      <hr class="border-gray-200" />
-
       <div class="space-y-6">
-        <section aria-labelledby="edit-bio-heading">
-          <h2 id="edit-bio-heading" class="text-md font-semibold text-gray-700 mb-2">Edytuj Biogram</h2>
-          <form class="space-y-3">
-            <div>
-              <label for="bio" class="sr-only">Twój Biogram</label>
-              <textarea id="bio" name="bio" rows="4" class="block w-full text-sm border-gray-300 rounded-lg shadow-sm focus:ring-red-500 focus:border-red-500 p-2.5" placeholder="Opowiedz nam trochę o sobie...">{userBio}</textarea>
-            </div>
-            <div class="flex justify-end"><button type="button" class="px-4 py-1.5 text-xs font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition">Zapisz Biogram</button></div>
-          </form>
-        </section>
         <hr class="border-gray-200/60" />
         <section aria-labelledby="change-email-heading">
           <h2 id="change-email-heading" class="text-md font-semibold text-gray-700 mb-2">Zmień Adres Email</h2>
@@ -75,28 +61,5 @@ const userInitials = user?.name ? user.name.charAt(0).toUpperCase() : (user?.ema
     </div>
   </div>
   <Footer slot="footer" />
-  <script define:vars={{ initialUserAvatarUrl: userAvatarUrl, initialUserInitials: userInitials }}>
-    // Script remains the same as previously provided for avatar preview
-    const avatarFileInput = document.getElementById('avatar-file-input');
-    const avatarDisplayContainer = document.getElementById('avatar-display-container');
-    // The label for="avatar-file-input" handles triggering the click.
-
-    avatarFileInput?.addEventListener('change', (event) => {
-      const files = (event.target).files;
-      if (files && files.length > 0) {
-        const file = files[0];
-        console.log('Selected avatar file:', file.name); 
-        
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (avatarDisplayContainer && e.target?.result) {
-            avatarDisplayContainer.innerHTML = `<img id="avatar-image-preview" src="${e.target.result}" alt="Avatar preview" class="w-full h-full object-cover rounded-full" />`;
-            avatarDisplayContainer.classList.remove('bg-red-600', 'text-white'); 
-            avatarDisplayContainer.classList.add('bg-gray-200');
-          }
-        }
-        reader.readAsDataURL(file);
-      }
-    });
-  </script>
+  
 </BaseLayout>

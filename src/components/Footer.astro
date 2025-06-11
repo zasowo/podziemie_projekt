@@ -1,5 +1,5 @@
 ---
-import { SITE_TITLE } from '@/consts';
+import { SITE_TITLE } from '@/consts'; //
 const currentYear = new Date().getFullYear();
 const socialLinks = [
   { href: "#", iconClass: "fab fa-twitter", label: "Twitter" },
@@ -10,17 +10,24 @@ const socialLinks = [
 const legalInfoParaphrased = "Od 2017 r. działacze opozycji antykomunistycznej i osoby represjonowane mogą ubiegać się o świadczenia pieniężne (Dz. U. 2017 poz. 1386).";
 const kombatanciLink = "www.kombatanci.gov.pl";
 const footerTagline = "Nie pozwólmy aby podziemne publikacje solidarnościowe uległy zapomnieniu, wraz z odejściem ludzi, którzy je tworzyli."
+
+// Gmail link
+const contactEmail = `makdar@vp.pl`;
+const emailSubject = encodeURIComponent(`Kontakt - ${SITE_TITLE}`);
+const gmailContactLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${contactEmail}&su=${emailSubject}`;
 ---
 <footer class="bg-gray-800 text-gray-400 py-8">
     <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-6 items-start">
+            {/* Column 1: Logo and Tagline */}
             <div class="md:col-span-7 text-center md:text-left">
                 <a href="/" class="inline-flex items-center space-x-2.5 justify-center md:justify-start mb-3 group">
                     <div class="w-9 h-9 bg-red-600 rounded-full flex items-center justify-center">
-                        <i class="fas fa-flag text-white text-base"></i> 
+                        <i class="fas fa-flag text-white text-base"></i>
                     </div>
                     <span 
                       class="font-bold text-white text-xl group-hover:text-red-400 transition-colors font-serif"
+                      style=""
                     >
                       {SITE_TITLE}
                     </span>
@@ -30,6 +37,7 @@ const footerTagline = "Nie pozwólmy aby podziemne publikacje solidarnościowe u
                 </blockquote>
             </div>
 
+            {/* Column 2: Contact/Social */}
             <div class="md:col-span-5 text-center md:text-right">
                 <h5 class="text-md font-semibold text-white mb-3">Śledź Nas / Kontakt</h5>
                 <div class="flex space-x-4 justify-center md:justify-end mb-3">
@@ -39,7 +47,14 @@ const footerTagline = "Nie pozwólmy aby podziemne publikacje solidarnościowe u
                     </a>
                   ))}
                 </div>
-                <a href={`mailto:makdar@vp.pl`} class="text-sm text-gray-400 hover:text-red-500 transition-colors">makdar@vp.pl</a>
+                <a 
+                  href={gmailContactLink} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  class="text-sm text-gray-400 hover:text-red-500 transition-colors"
+                >
+                  {contactEmail}
+                </a>
             </div>
         </div>
         
@@ -54,8 +69,24 @@ const footerTagline = "Nie pozwólmy aby podziemne publikacje solidarnościowe u
                 &copy; {currentYear} {SITE_TITLE}. Wszelkie prawa zastrzeżone.
             </p>
         </div>
+
+        {/* autorzy */}
+        <div class="mt-6 text-center">
+            <p class="text-[10px] text-gray-600 tracking-wider"> 
+                Strona stworzona przez: Dawid Kozłowski i Kamil Kopischke
+            </p>
+        </div>
+     
+
     </div>
 </footer>
 <script>
-
+  const footerAboutButton = document.getElementById('footer-about-button');
+   footerAboutButton?.addEventListener('click', () => {
+     if (typeof (window as any).openAboutModal === 'function') {
+       (window as any).openAboutModal();
+     } else {
+       console.error('openAboutModal function not found on window object (footer).');
+     }
+   });
 </script>

@@ -4,11 +4,12 @@ import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import { SITE_TITLE } from '@/consts';
 
-if (Astro.locals.user?.id) {
+
+if ((Astro.locals as any).user?.id) {
   return Astro.redirect('/');
 }
 ---
-<BaseLayout title={`Rejestracja - ${SITE_TITLE}`}> {/* Rejestracja */}
+<BaseLayout title={`Rejestracja - ${SITE_TITLE}`}>
   <Header slot="header" />
 
   <div class="min-h-[calc(100vh-var(--header-height,0px)-var(--footer-height,0px))] flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 hero-pattern">
@@ -16,55 +17,58 @@ if (Astro.locals.user?.id) {
       <div>
         <div class="flex items-center justify-center space-x-3 mb-6">
           <div class="w-10 h-10 sm:w-12 sm:h-12 bg-red-600 rounded-full flex items-center justify-center">
-            <i class="fas fa-user-plus text-white text-lg sm:text-xl"></i> {/* Changed icon */}
+            <i class="fas fa-user-plus text-white text-lg sm:text-xl"></i>
           </div>
           <h2 class="text-center text-xl sm:text-2xl font-bold text-gray-900">
-            Utwórz Nowe Konto {/* Create your Account */}
+            Utwórz Nowe Konto
           </h2>
         </div>
       </div>
 
       <div id="error" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 text-sm rounded mb-4 hidden" role="alert">
-        {/* Error message will be injected here */}
+        {/* Komunikat błędu zostanie wstawiony tutaj */}
       </div>
 
       <form id="signup-form" class="mt-8 space-y-4">
         <div>
-          <label for="name" class="block text-xs font-medium text-gray-600 mb-0.5">Nazwa Użytkownika</label> {/* Name */}
+          <label for="name" class="block text-xs font-medium text-gray-600 mb-0.5">Nazwa Użytkownika</label>
           <input id="name" name="name" type="text" autocomplete="name" required
                  class="block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 p-2.5"
-                 placeholder="Twoja nazwa użytkownika" /> {/* Your Name */}
+                 placeholder="Twoja nazwa użytkownika" />
         </div>
         <div>
-          <label for="email-address" class="block text-xs font-medium text-gray-600 mb-0.5">Adres Email</label> {/* Email address */}
+          <label for="email-address" class="block text-xs font-medium text-gray-600 mb-0.5">Adres Email</label>
           <input id="email-address" name="email" type="email" autocomplete="email" required
                  class="block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 p-2.5"
-                 placeholder="ty@example.com" /> {/* you@example.com */}
+                 placeholder="ty@example.com" />
         </div>
         <div>
-          <label for="password" class="block text-xs font-medium text-gray-600 mb-0.5">Hasło</label> {/* Password */}
+          <label for="password" class="block text-xs font-medium text-gray-600 mb-0.5">Hasło</label>
           <input id="password" name="password" type="password" autocomplete="new-password" required
                  class="block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 p-2.5"
-                 placeholder="Utwórz hasło" /> {/* Create a password */}
+                 placeholder="Utwórz hasło" />
         </div>
-        {/* Consider adding "Confirm Password" field if your auth logic supports it */}
-        {/* <div>
+        
+        {/* --- DODANE POLE "POWTÓRZ HASŁO" --- */}
+        <div>
           <label for="confirm-password" class="block text-xs font-medium text-gray-600 mb-0.5">Potwierdź Hasło</label>
           <input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" required
                  class="block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 p-2.5"
                  placeholder="Potwierdź swoje hasło" />
-        </div> */}
-         <div class="pt-2"> {/* Added padding top for button */}
+        </div>
+        {/* --- KONIEC DODANEGO POLA --- */}
+
+         <div class="pt-2">
           <button type="submit"
                   class="group w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out">
-            Zarejestruj się {/* Sign up */}
+            Zarejestruj się
           </button>
         </div>
       </form>
       <p class="mt-5 text-center text-xs text-gray-600">
-        Masz już konto? {/* Already have an account? */}
+        Masz już konto?
         <a href="/user/signin" class="font-medium text-red-600 hover:text-red-500 hover:underline ml-1">
-          Zaloguj się {/* Sign in */}
+          Zaloguj się
         </a>
       </p>
     </div>
@@ -81,7 +85,7 @@ if (Astro.locals.user?.id) {
     signupForm?.addEventListener('submit', async (event) => {
       event.preventDefault();
       if (errorDiv) {
-        errorDiv.textContent = ''; // Clear previous errors
+        errorDiv.textContent = ''; // Wyczyść poprzednie błędy
         errorDiv.classList.add('hidden');
       }
 
@@ -89,22 +93,27 @@ if (Astro.locals.user?.id) {
       const name = (form.elements.namedItem('name') as HTMLInputElement)?.value;
       const email = (form.elements.namedItem('email') as HTMLInputElement)?.value;
       const password = (form.elements.namedItem('password') as HTMLInputElement)?.value;
-      // const confirmPassword = (form.elements.namedItem('confirmPassword') as HTMLInputElement)?.value; // If you add confirm password field
+      // --- POBRANIE WARTOŚCI Z NOWEGO POLA ---
+      const confirmPassword = (form.elements.namedItem('confirmPassword') as HTMLInputElement)?.value;
 
-      if (!name || !email || !password) {
+      // Walidacja po stronie klienta
+      if (!name || !email || !password || !confirmPassword) {
         if (errorDiv) {
-          errorDiv.textContent = 'Proszę wypełnić wszystkie pola.'; // Please fill in all fields.
+          errorDiv.textContent = 'Proszę wypełnić wszystkie pola.';
           errorDiv.classList.remove('hidden');
         }
         return;
       }
-      // if (password !== confirmPassword) { // If you add confirm password field
-      //   if (errorDiv) {
-      //     errorDiv.textContent = 'Hasła nie są zgodne.'; // Passwords do not match.
-      //     errorDiv.classList.remove('hidden');
-      //   }
-      //   return;
-      // }
+      
+      // --- DODANA WALIDACJA ZGODNOŚCI HASEŁ ---
+      if (password !== confirmPassword) {
+        if (errorDiv) {
+          errorDiv.textContent = 'Hasła nie są zgodne. Spróbuj ponownie.';
+          errorDiv.classList.remove('hidden');
+        }
+        return;
+      }
+      // --- KONIEC DODANEJ WALIDACJI ---
       
       const result = await authClient.signUp.email({
         name,
@@ -114,14 +123,14 @@ if (Astro.locals.user?.id) {
 
       if (result && result.error) {
         if (errorDiv) {
-            errorDiv.textContent = `Błąd: ${result.error.message || 'Wystąpił nieznany błąd.'}`; // Error: An unknown error occurred.
+            errorDiv.textContent = `Błąd: ${result.error.message || 'Wystąpił nieznany błąd.'}`;
             errorDiv.classList.remove('hidden');
         }
       } else if (result && !result.error) {
         window.location.href = '/'; 
       } else {
          if (errorDiv) {
-            errorDiv.textContent = 'Wystąpił nieoczekiwany błąd podczas rejestracji.'; // An unexpected error occurred during sign up.
+            errorDiv.textContent = 'Wystąpił nieoczekiwany błąd podczas rejestracji.';
             errorDiv.classList.remove('hidden');
         }
       }

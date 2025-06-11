@@ -50,7 +50,8 @@ export const POST: APIRoute = async ({ request }) => {
             name: session.user.name,
             comment: comment.trim(),
             createdAt: new Date(),
-            updatedAt: new Date()
+            updatedAt: new Date(),
+            userRole: session.user.role
         };
         const db = await connectToDatabase();
 
@@ -59,7 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
             { _id: new ObjectId(postId) },
             {
                 $push: {
-                    comments: newComment
+                    comments: newComment as any
                 }
             } as any
         );

@@ -19,6 +19,12 @@
 	font-size:xx-large
 }
 
+.admin-name-glow {
+  font-weight: 600; /* Pogrubienie dla wyróżnienia */
+  color: #f59e0b; /* Złoty/bursztynowy kolor (Tailwind's amber-500) */
+  text-shadow: 0 0 8px rgba(251, 191, 36, 0.6); /* Złota poświata */
+}
+
 :root {
 	--accent: #ef4444; 
 	--accent-dark: #dc2626; 

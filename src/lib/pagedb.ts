@@ -11,14 +11,32 @@ export async function connectToDatabase() {
   return cachedDb;
 }
 
-export async function getAllPages() {
+export async function getPagesByOrganization(organizationSlug: string): Promise<Page[]> {
   const db = await connectToDatabase();
-  return db.collection<Page>('pages').find().toArray();
+  const pagesCollection = db.collection<Page>('pages');
+  const pages = await pagesCollection.find({ organizationSlug: organizationSlug })
+    .sort({ createdAt: -1 }) 
+    .toArray();
+  return pages;
 }
 
-export async function getUserPages(id: string) {
+export async function getAllPages(): Promise<Page[]> {
   const db = await connectToDatabase();
-  return db.collection<Page>('pages').find({ creatorId: new ObjectId(id) }).sort({ slug:1 }).toArray();
+  const pages = await db.collection<Page>('pages')
+    .find()
+    .sort({ createdAt: -1 }) 
+    .toArray();
+  return pages;
+}
+
+export async function getUserPages(userId: string | ObjectId): Promise<Page[]> {
+  const db = await connectToDatabase();
+  const pagesCollection = db.collection<Page>('pages');
+  const creatorIdAsObjectId = typeof userId === 'string' ? new ObjectId(userId) : userId;
+  const pages = await pagesCollection.find({ creatorId: creatorIdAsObjectId })
+    .sort({ createdAt: -1 })
+    .toArray();
+  return pages;
 }
 
 
@@ -33,6 +51,7 @@ export interface Comment {
   name: string;
   userId: ObjectId | string;
   createdAt: Date; 
+  userRole?: "admin" | "edytor" | "user";
 }
 
 export interface Page {
@@ -45,6 +64,7 @@ export interface Page {
   updatedAt?: Date;   // Dla śledzenia aktualizacji
   comments?: Comment[];
   regionSlug?: string | null;
+  organizationSlug?: string | null;
 }
 
 export interface LatestCommentInfo {
@@ -55,6 +75,8 @@ export interface LatestCommentInfo {
   commenterName: string;
   commentText: string;
   commentCreatedAt: Date;
+  userRole?: "admin" | "edytor" | "user";
+
 }
 
 export async function getPagesByRegion(regionSlug: string): Promise<Page[]> {
@@ -97,6 +119,7 @@ export async function getLatestComments(limit: number = 3): Promise<LatestCommen
           commenterName: comment.name,
           commentText: comment.comment,
           commentCreatedAt: comment.createdAt,
+          userRole: comment.userRole
         });
       });
     }

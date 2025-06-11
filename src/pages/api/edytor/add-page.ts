@@ -10,6 +10,7 @@ interface PostData {
   titleInput: string;    // Tytuł strony
   slugInput: string;     // Slug strony
   regionSlug?: string | null; // Opcjonalny slug regionu
+  organizationSlug?: string | null
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -40,7 +41,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       content: body.content,
       titleInput: body.titleInput,
       slugInput: body.slugInput,
-      regionSlug: body.regionSlug, 
+      regionSlug: body.regionSlug,
+      organizationSlug: body.organizationSlug, 
     };
 
     // Walidacja podstawowych pól
@@ -97,6 +99,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       createdAt: new Date(),
       updatedAt: new Date(), // Ustawiamy updatedAt na ten sam czas co createdAt
       regionSlug: data.regionSlug === "" ? null : (data.regionSlug || null), // Zapisz regionSlug lub null
+      organizationSlug: data.organizationSlug || null,
       comments: [], // Inicjalizuj pustą tablicą komentarzy
     };
 

@@ -46,10 +46,14 @@ const CommentList: React.FC<CommentListProps> = ({ comments, postId, role }) => 
     }
   };
 
-  return (
+ return (
     <ul className="space-y-6">
       {comments.map((comment) => ( 
-        <li key={comment._id} className="p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200/80">
+          <li 
+            key={comment._id} 
+            id={`comment-${comment._id}`} 
+            className="p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200/80 transition-all duration-300"
+          >
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0">
               <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-red-500 text-sm font-semibold text-white">
@@ -58,7 +62,7 @@ const CommentList: React.FC<CommentListProps> = ({ comments, postId, role }) => 
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-center">
-                <p className="text-sm font-semibold text-gray-800">
+                <p className={`text-sm font-semibold ${comment.userRole === 'admin' ? 'admin-name-glow' : 'text-gray-800'}`}>
                   {comment.name || 'Anonimowy Użytkownik'}
                 </p>
                 <time dateTime={new Date(comment.createdAt).toISOString()} className="text-xs text-gray-400">
